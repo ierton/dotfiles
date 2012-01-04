@@ -88,11 +88,17 @@
     defaultLocale = "en_US.UTF-8";
   };
 
+  services.nixosManual.showManual = false;
+
   # Add an OpenSSH daemon.
   services.openssh.enable = true;
 
   # Add CUPS to print documents.
   services.printing.enable = true;
+
+  services.acpid = {
+    powerEventCommands = "${pkgs.upstart}/sbin/poweroff";
+  };
 
   # Add XServer (default if you have used a graphical iso)
   services.xserver = {
@@ -132,8 +138,6 @@
     ];
   };
 
-  services.nixosManual.showManual = false;
-
   environment.pathsToLink = ["/"];
 
   environment.systemPackages = with pkgs ; [
@@ -151,6 +155,7 @@
     iptables
     nmap
     tcpdump
+    pmutils
     haskellPackages.ghc
     haskellPackages.cabalInstall
 
@@ -168,6 +173,7 @@
     zathura
     xneur
     MPlayer
+    vimprobable2
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
@@ -181,4 +187,4 @@
   };
 }
 
-# vim: expandtab : tabstop=2 :
+# vim: expandtab : tabstop=2 : autoindent :
