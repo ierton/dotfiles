@@ -1,0 +1,272 @@
+" common settings
+syntax enable
+filetype plugin on
+filetype indent on
+"colorscheme elflord2
+colorscheme default
+let mapleader = "`"
+let maplocalleader = "`"
+
+set guioptions-=m
+set guioptions-=T
+set scrolloff=100
+set tabstop=4
+set nobackup
+set shiftwidth=4
+set noshowmatch
+set showcmd
+set autowrite
+set foldmethod=marker
+set foldcolumn=1
+set backspace=indent,eol,start
+set incsearch
+set ignorecase
+set formatoptions+=ro
+set cinoptions+=g0,(4
+set nohlsearch
+set guifont=Terminus\ 13
+set mouse=nir
+set laststatus=1 "Statusline is present always
+" Sets tags filename
+set tags=tags;
+set encoding=utf-8
+set fileencodings=utf8,cp1251
+set t_Co=256
+set modeline
+
+au FileType cpp set textwidth=80
+au FileType c set textwidth=80
+au FileType text set textwidth=80
+au Bufenter *.hs set expandtab  "In Haskell all tabs are spaces
+"au Bufenter *.hs compiler=ghc
+au Bufenter *.cabal set expandtab  "In Haskell all tabs are spaces
+au Bufenter *.lhs set expandtab  "In Haskell all tabs are spaces
+au Bufenter * syntax sync minlines=50
+
+" General bindings
+nnoremap <F2> <ESC>:w<CR>
+inoremap <F2> <ESC>:w<CR>
+inoremap <Leader><Leader> <Leader>
+
+" Fast command line
+nnoremap ! :!
+
+" Display lines scrolling
+nnoremap j gj
+nnoremap k gk
+nnoremap Y y$
+
+" Quick quit
+nnoremap <ESC><ESC> <ESC>:qa<CR>
+nnoremap q <ESC>:qa<CR>
+
+" Visual mode tweaks
+vnoremap : y:<C-r>"<C-b>
+vnoremap h y:<C-r>"<C-b>h <CR>
+
+" Easy paste
+nnoremap <C-i> :set paste<CR>i
+nnoremap i :set nopaste<CR>i
+
+"{{{ X clipboard bindings
+if ( $DISPLAY != "" ) && has("x11")
+	nnoremap <S-Ins> "+p
+	inoremap <S-Ins> <Esc>"+pa
+	vnoremap <C-Ins> "+y
+	vnoremap y "+y
+	vnoremap d "+d
+	vnoremap c "+c
+	vnoremap p "+p
+
+	nnoremap Y "+y$
+	nnoremap yy "+yy
+	nnoremap D "+D
+	nnoremap dd "+dd
+	nnoremap C "+C
+	nnoremap cc "+cc
+	nnoremap X "+X
+	nnoremap x "+x
+	nnoremap yw "+yw
+
+	nnoremap p "+p
+	nnoremap P "+P
+endif
+"}}}
+
+" {{{ Quicfix bindings
+nnoremap <Leader>f :cope<CR>
+au BufWinEnter quickfix map <buffer> o <cr>
+au BufWinEnter quickfix map <buffer> J :cnext<cr>:copen<cr>
+au BufWinEnter quickfix map <buffer> K :cprevious<cr>:copen<cr>
+au BufWinEnter quickfix map <buffer> <C-o> :cold<cr>
+au BufWinEnter quickfix map <buffer> <C-i> :cnew<cr>
+au BufWinEnter quickfix map <buffer> <Leader>f <C-w>q
+au BufWinEnter quickfix map <buffer> q :q<cr>
+"au BufReadPost quickfix setlocal modifiable
+"            \ | silent exe 'g/^/s//\=line(".")." "/'
+"            \ | setlocal nomodifiable
+"}}}
+
+"Russian keymap {{{
+map ё `
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map нн yy
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+
+map Ё ~
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+"}}}
+
+" Find file in current directory and edit it."{{{
+function! Find(...)
+  let path="."
+  if a:0==2
+    let path=a:2
+  endif
+  let l:list=system("find ".path. " -name '".a:1."' | grep -v .svn ")
+  let l:num=strlen(substitute(l:list, "[^\n]", "", "g"))
+  if l:num < 1
+    echo "'".a:1."' not found"
+    return
+  endif
+  if l:num == 1
+    exe "open " . substitute(l:list, "\n", "", "g")
+  else
+    let tmpfile = tempname()
+    exe "redir! > " . tmpfile
+    silent echon l:list
+    redir END
+    let old_efm = &efm
+    set efm=%f
+
+    if exists(":cgetfile")
+        execute "silent! cgetfile " . tmpfile
+    else
+        execute "silent! cfile " . tmpfile
+    endif
+
+    let &efm = old_efm
+
+    " Open the quickfix window below the current window
+    botright copen
+
+    call delete(tmpfile)
+  endif
+endfunction
+command! -nargs=* Find :call Find(<f-args>)
+" }}}
+
+"""""""""""""""""""""""""""
+" Plugins section
+"""""""""""""""""""""""""""
+" TagList
+let g:Tlist_Use_Horiz_Window = 1
+let g:Tlist_Show_One_File = 1
+let g:Tlist_Max_Tag_Length = 30
+let g:Tlist_GainFocus_On_ToggleOpen = 1
+nnoremap <Leader>l <ESC>:TlistToggle<CR>
+
+" NERDTree settings
+let g:NERDTreeWinSize=20
+let g:NERDTreeIgnore=['\.o$', '\.ko$', '^cscope', '\.hi']
+nnoremap <Leader>n <ESC>:NERDTreeToggle<CR>
+inoremap <Leader>n <ESC>:NERDTreeToggle<CR>
+nnoremap <Leader>N <ESC>:NERDTreeFind<CR>
+inoremap <Leader>N <ESC>:NERDTreeFind<CR>
+
+" BufferExplorer
+nnoremap <Leader>e <Esc>:BufExplorer<CR>
+inoremap <Leader>e <Esc>:BufExplorer<CR>
+
+" make
+nnoremap <F5> :make<CR>
+inoremap <F5> <Esc>:make<CR>
+
+" EasyGrep
+let g:EasyGrepRecursive = 1
+let g:EasyGrepMode = 2
+
+" Haskell
+let g:haddock_browser = "/usr/bin/midori"
+let g:haddock_browser_callformat = '%s %s'
+let g:haskell_indent_case = 0
+let g:haskell_indent_if = 0
+
+" Local vimrc
+let g:local_vimrc = '.vimrc_local.vim'
+
+" GetLatestVimScripts
+let g:GetLatestVimScripts_allowautoinstall = 1
+
+" comments
+map <leader>c <C-C>
+map <leader>x <C-X>
+
+" opener
+let g:opener_cmd = "gnome-open"
+

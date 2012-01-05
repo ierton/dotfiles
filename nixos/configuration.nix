@@ -14,7 +14,11 @@
 
   # boot.kernelPackages = pkgs.linuxPackages_3_0;
 
-  boot.blacklistedKernelModules = [ "wimax" "i2400m" "i2400m_usb" ];
+  boot.blacklistedKernelModules = [ 
+    "wimax"
+    "i2400m"
+    "i2400m_usb"
+    ];
 
   boot.initrd.kernelModules = [
     # Specify all kernel modules that are necessary for mounting the root
