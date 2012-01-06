@@ -12,7 +12,7 @@
     /etc/nixos/hardware-configuration.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_3_0;
+  #boot.kernelPackages = pkgs.linuxPackages_3_0;
 
   boot.blacklistedKernelModules = [ 
     "wimax"
