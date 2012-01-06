@@ -103,10 +103,12 @@
   services.printing.enable = true;
 
   services.acpid = {
-    powerEventCommands = "${pkgs.upstart}/sbin/poweroff";
+    powerEventCommands = ''
+      ${pkgs.upstart}/sbin/poweroff
+    '';
     lidEventCommands = ''
       LID="/proc/acpi/button/lid/LID/state"
-      state=`cat $LID | awk '{print $2}'`
+      state=`cat $LID | ${pkgs.gawk}/bin/awk '{print $2}'`
       case "$state" in
         *open*) ;;
         *close*) ${pkgs.pmutils}/sbin/pm-suspend ;;
@@ -173,6 +175,8 @@
     pmutils
     haskellPackages.ghc
     haskellPackages.cabalInstall
+    acpid
+    acpitool
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
