@@ -17,7 +17,7 @@ set noshowmatch
 set showcmd
 set autowrite
 set foldmethod=marker
-set foldcolumn=1
+set foldcolumn=0
 set backspace=indent,eol,start
 set incsearch
 set ignorecase
@@ -62,10 +62,10 @@ nnoremap q <ESC>:qa<CR>
 
 " Visual mode tweaks
 vnoremap : y:<C-r>"<C-b>
-vnoremap h y:<C-r>"<C-b>h <CR>
+" vnoremap h y:<C-r>"<C-b>h <CR>
 
 " Easy paste
-nnoremap <C-i> :set paste<CR>i
+nnoremap <Leader>i :set paste<CR>i
 nnoremap i :set nopaste<CR>i
 
 "{{{ X clipboard bindings
