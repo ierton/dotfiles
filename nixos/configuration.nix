@@ -12,7 +12,7 @@
     /etc/nixos/hardware-configuration.nix
   ];
 
-  # boot.kernelPackages = pkgs.linuxPackages_3_0;
+  boot.kernelPackages = pkgs.linuxPackages_3_0;
 
   boot.blacklistedKernelModules = [ 
     "wimax"
@@ -104,6 +104,15 @@
 
   services.acpid = {
     powerEventCommands = "${pkgs.upstart}/sbin/poweroff";
+    lidEventCommands = ''
+      LID="/proc/acpi/button/lid/LID/state"
+      state=`cat $LID | awk '{print $2}'`
+      case "$state" in
+        *open*) ;;
+        *close*) ${pkgs.pmutils}/sbin/pm-suspend ;;
+        *) logger -t lid-handler "Failed to detect lid state ($state)" ;;
+      esac
+    '';
   };
 
   # Add XServer (default if you have used a graphical iso)
@@ -185,7 +194,9 @@
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
     xlibs.libXft xlibs.libXext xlibs.libSM xlibs.libICE
     xlibs.xextproto xlibs.libXrender xlibs.renderproto 
-    xlibs.libxkbfile xlibs.kbproto
+    xlibs.libxkbfile xlibs.kbproto xlibs.libXrandr 
+    xlibs.randrproto
+    glew mesa
   ];
 
   nixpkgs.config = {
