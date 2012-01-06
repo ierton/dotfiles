@@ -46,6 +46,8 @@
       '';
   };
 
+  time.timeZone = "Europe/Moscow";
+
   networking = {
     hostName = "pokemon";
     interfaceMonitor.enable = false;

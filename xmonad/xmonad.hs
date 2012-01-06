@@ -12,20 +12,12 @@ import XMonad.Layout.Magnifier
 import XMonad.Layout.LayoutHints
 import Data.Ratio
 
-myLayoutHook = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
-    where
-      tiled = Tall nmaster delta ratio
-      nmaster = 1
-      delta = 3/100
-      ratio = 1/2
-      magnify = magnifiercz (12%10)
-
 main = do
     xmonad $ config `additionalKeysP` keys `additionalMouseBindings` mousekeys where
 
     config = defaultConfig {
         modMask = mod4Mask,
-        layoutHook = myLayoutHook
+        layoutHook = layoutHook
         }
 
     keys = [
@@ -40,4 +32,12 @@ main = do
         ((mod4Mask, button4), (\_ -> windows W.focusUp )),
         ((mod4Mask, button5), (\_ -> windows W.focusDown))
         ]
+
+    layoutHook = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
+        where
+          tiled = Tall nmaster delta ratio
+          nmaster = 1
+          delta = 3/100
+          ratio = 1/2
+          magnify = magnifiercz (12%10)
 
