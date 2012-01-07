@@ -193,6 +193,7 @@
     xneur
     MPlayer
     vimprobable2
+    unclutter
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
