@@ -46,7 +46,8 @@
       '';
   };
 
-  time.timeZone = "Europe/Moscow";
+  # Europe/Moscow
+  time.timeZone = "Etc/GMT-4";
 
   networking = {
     hostName = "pokemon";
@@ -117,6 +118,11 @@
     '';
   };
 
+  services.ntp = {
+    enable = true;
+    servers = [ "server.local" "0.pool.ntp.org" "1.pool.ntp.org" "2.pool.ntp.org" ];
+  };
+
   # Add XServer (default if you have used a graphical iso)
   services.xserver = {
     enable = true;
@@ -129,7 +135,11 @@
     startOpenSSHAgent = true;
     synaptics = {
       enable = true;
-      twoFingerScroll = true;
+      twoFingerScroll = false;
+      additionalOptions = ''
+        Option "LBCornerButton" "2"
+        Option "LTCornerButton" "3"
+        '';
     };
 
     displayManager = {
@@ -152,6 +162,9 @@
       clearlyU
       cm_unicode
       andagii
+      liberation_ttf
+      ttf_bitstream_vera
+      bakoma_ttf
     ];
   };
 
@@ -166,6 +179,7 @@
     wget
     screen
     gitAndTools.gitFull
+    subversion
     ctags
     mc
     psmisc
@@ -177,6 +191,8 @@
     haskellPackages.cabalInstall
     acpid
     acpitool
+    cpufrequtils
+    cmake
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
@@ -194,6 +210,11 @@
     MPlayer
     vimprobable2
     unclutter
+    trayer
+    xorg.xdpyinfo
+    xfontsel
+    xlsfonts
+    #conky #Doesn't work
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
