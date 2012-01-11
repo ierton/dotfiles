@@ -193,6 +193,7 @@
     acpitool
     cpufrequtils
     cmake
+    unrar
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
@@ -214,7 +215,11 @@
     xorg.xdpyinfo
     xfontsel
     xlsfonts
-    #conky #Doesn't work
+    djvulibre
+    ghostscript
+    djview4
+    #evince
+    conky #Doesn't work
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
@@ -227,6 +232,7 @@
 
   nixpkgs.config = {
     chrome.enableRealPlayer = true;
+    chrome.jre = true;
   };
 }
 
