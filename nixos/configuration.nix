@@ -156,14 +156,14 @@
     enableCoreFonts = true;
     enableGhostscriptFonts = true;
     extraFonts = with pkgs ; [
-      terminus_font
+      liberation_ttf
+      ttf_bitstream_vera
       dejavu_fonts
+      terminus_font
       bakoma_ttf
       clearlyU
       cm_unicode
       andagii
-      liberation_ttf
-      ttf_bitstream_vera
       bakoma_ttf
     ];
   };
@@ -193,7 +193,9 @@
     acpitool
     cpufrequtils
     cmake
-    unrar
+    intltool
+    gettext
+    zip unzip unrar
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
@@ -219,7 +221,12 @@
     ghostscript
     djview4
     #evince
-    conky #Doesn't work
+    conky #Limited
+    dzen2
+    hicolor_icon_theme
+    oxygen_gtk
+    lxappearance
+    skype_linux
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
@@ -233,6 +240,7 @@
   nixpkgs.config = {
     chrome.enableRealPlayer = true;
     chrome.jre = true;
+    subversion.saslSupport = true;
   };
 }
 
