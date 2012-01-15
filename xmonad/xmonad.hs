@@ -35,8 +35,8 @@ main = do
 
     myBaseConfig = defaultConfig {
         modMask = mod4Mask,
-        normalBorderColor = activeColor $ theme $ myTheme,
-        focusedBorderColor = inactiveColor $ theme $ myTheme,
+        normalBorderColor = inactiveColor $ theme $ myTheme,
+        focusedBorderColor = activeColor $ theme $ myTheme,
         layoutHook = myLayoutHook,
         terminal = "urxvtc"
 --         logHook = fadeWindowsLogHook myFadeHook,
