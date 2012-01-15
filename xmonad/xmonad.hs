@@ -1,5 +1,7 @@
 import Control.Applicative ((<$>)) -- , liftA2)
 import Control.Monad (liftM2, (>=>))
+import Control.Arrow ((&&&),first)
+import qualified Data.Map as Map
 import System.IO
 import Data.Ratio
 import XMonad
@@ -22,6 +24,7 @@ import XMonad.Prompt.Window
 import XMonad.Util.Themes
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig
+import XMonad.Util.XSelection
 -- import XMonad.Hooks.FadeWindows
 import XMonad.Layout.TabBarDecoration
 
@@ -50,8 +53,10 @@ main = do
         ("M-c", kill),
         ("M-e", spawn "urxvtc"),
         ("M-g", goToSelected defaultGSConfig),
+        ("M-j", windows W.focusUp),
+        ("M-k", windows W.focusDown),
 --         ("M-g", windowPromptGoto  defaultXPConfig),
-        ("M-s", sshPrompt defaultXPConfig)
+        ("M-s", sshPrompt myXPConfig)
         ]
 
     myMousekeys = [
@@ -94,4 +99,17 @@ main = do
                                              , inactiveTextColor   = "black"
                                              }
            }
+
+    myXPConfig = defaultXPConfig { promptKeymap = myXPKeymap } 
+    myXPKeymap = defaultXPKeymap `Map.union` myXPKeys where
+        myXPKeys = Map.fromList $ map (first $ (,) mod1Mask) -- alt + <key>
+                   [ (xK_b, moveWord Prev)
+                   , (xK_f, moveWord Next)
+                   , (xK_d, killWord Next)
+                   ] ++
+                   map (first $ (,) controlMask) -- control + <key>
+                   [ (xK_p, moveHistory W.focusDown')
+                   , (xK_n, moveHistory W.focusUp')
+                   , (xK_y, getSelection >>= setInput )
+                   ]
 
