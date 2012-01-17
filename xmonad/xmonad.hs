@@ -75,7 +75,8 @@ main = do
 
     myGaps = let g = 7 in gaps [(U,0), (D,g), (R,g), (L,g)]
 
-    myLayoutHook = (myGaps myTabbedLayout) ||| Full
+    myLayoutHook = (myGaps myTabbedLayout) ||| Full ||| magnify Grid where
+        magnify = magnifiercz (12%10)
 
 --     myLayoutHook = simpleTabBar $ layoutHook defaultConfig
 
