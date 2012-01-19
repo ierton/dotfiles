@@ -125,9 +125,8 @@ main = do
 
     myClockMonitor = monitor {
          -- Cairo-clock creates 2 windows with the same classname, thus also using title
-         --prop = ClassName "Cairo-clock" `And` Title "MacSlow's Cairo-Clock"
-         prop = ClassName "Cairo-clock"
-       , rect = Rectangle (600-150) (600 - 150) 150 150
+         prop = ClassName "Cairo-clock" `And` Title "MacSlow's Cairo-Clock"
+       , rect = Rectangle (1024-100) (600 - 100) 100 100
        , persistent = True
        , opacity = 0.6
        , visible = True
