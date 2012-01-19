@@ -16,6 +16,12 @@ import XMonad.Layout.Magnifier
 import XMonad.Layout.LayoutHints
 import XMonad.Layout.Tabbed
 import XMonad.Layout.Gaps
+import XMonad.Layout.LayoutModifier
+import XMonad.Layout.TabBarDecoration
+import XMonad.Layout.DecorationAddons
+import XMonad.Layout.ButtonDecoration
+import XMonad.Layout.ImageButtonDecoration
+import XMonad.Layout.Monitor
 import XMonad.Actions.GridSelect
 import XMonad.Prompt
 import XMonad.Prompt.Ssh
@@ -25,8 +31,8 @@ import XMonad.Util.Themes
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig
 import XMonad.Util.XSelection
--- import XMonad.Hooks.FadeWindows
-import XMonad.Layout.TabBarDecoration
+import XMonad.Layout.ShowWName
+import XMonad.Hooks.FadeInactive
 
 main = do
     xmonad myConfig where
@@ -35,17 +41,13 @@ main = do
 
     myBaseConfig = defaultConfig {
         modMask = mod4Mask,
-        normalBorderColor = inactiveColor $ theme $ myTheme,
+        normalBorderColor = "white",
         focusedBorderColor = activeColor $ theme $ myTheme,
-        layoutHook = myLayoutHook,
+        layoutHook = showWName myLayoutHook,
+        manageHook = myManageHook,
+        logHook = myLogHook,
         terminal = "urxvtc"
---         logHook = fadeWindowsLogHook myFadeHook,
---         handleEventHook = fadeWindowsEventHook
         } 
-
---     myFadeHook = composeAll [
---         isUnfocused --> transparency 0.2,
---         opaque ]
 
     myKeys = [
         ("M-<Up>", windows W.swapUp),
@@ -56,7 +58,8 @@ main = do
         ("M-j", windows W.focusUp),
         ("M-k", windows W.focusDown),
 --         ("M-g", windowPromptGoto  defaultXPConfig),
-        ("M-s", sshPrompt myXPConfig)
+        ("M-s", sshPrompt myXPConfig),
+        ("M-u", broadcastMessage ToggleMonitor >> refresh)
         ]
 
     myMousekeys = [
@@ -71,13 +74,17 @@ main = do
 --     layoutHookNoGaps = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
 
     myTabbedLayout = tabbedAlways shrinkText (theme myTheme)
+
     myMagnifyLayout = magnifiercz (12%10) Grid
 
     myGaps = let g = 7 in gaps [(U,0), (D,g), (R,g), (L,g)]
 
-    myLayoutHook = (myGaps myTabbedLayout) ||| Full ||| tiled where
+    myLayoutHook = ModifiedLayout myClockMonitor $ (myGaps myTabbedLayout) ||| Full ||| tiled ||| myMagnifyLayout where
         tiled = Tall 1 (3/100) (1/2)
 
+--     myLayoutHook = imageButtonDeco shrinkText defaultThemeWithImageButtons (layoutHook defaultConfig)
+
+--     myLayoutHook = buttonDeco shrinkText defaultThemeWithButtons (layoutHook defaultConfig)
 --     myLayoutHook = simpleTabBar $ layoutHook defaultConfig
 
 --     myLayoutHook = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid where
@@ -113,4 +120,20 @@ main = do
                    , (xK_n, moveHistory W.focusUp')
                    , (xK_y, getSelection >>= setInput )
                    ]
+
+    myManageHook = manageMonitor myClockMonitor
+
+    myClockMonitor = monitor {
+         -- Cairo-clock creates 2 windows with the same classname, thus also using title
+         --prop = ClassName "Cairo-clock" `And` Title "MacSlow's Cairo-Clock"
+         prop = ClassName "Cairo-clock"
+       , rect = Rectangle (600-150) (600 - 150) 150 150
+       , persistent = True
+       , opacity = 0.6
+       , visible = True
+       , name = "clock"
+       }
+
+    myLogHook = fadeInactiveLogHook fadeAmount
+        where fadeAmount = 0.8
 
