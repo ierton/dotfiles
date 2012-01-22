@@ -139,6 +139,6 @@ main = do
        , name = "clock"
        }
 
-    myLogHook = fadeInactiveLogHook fadeAmount
-        where fadeAmount = 0.8
+    myLogHook = fadeInactiveLogHook fadeAmount where
+        fadeAmount = 0.8
 
