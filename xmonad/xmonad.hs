@@ -10,6 +10,7 @@ import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Actions.FlexibleResize as Flex
 import XMonad.Actions.WindowNavigation
+import XMonad.Actions.FocusNth
 import XMonad.Layout.Circle
 import XMonad.Layout.Grid
 import XMonad.Layout.Magnifier
@@ -35,7 +36,10 @@ import XMonad.Layout.ShowWName
 import XMonad.Hooks.FadeInactive
 
 main = do
-    xmonad myConfig where
+    spawn "cairo-clock"
+    xmonad myConfig
+
+    where
 
     myConfig = myBaseConfig `additionalKeysP` myKeys `additionalMouseBindings` myMousekeys
 
@@ -53,13 +57,15 @@ main = do
         ("M-<Up>", windows W.swapUp),
         ("M-b", spawn "chrome"),
         ("M-c", kill),
-        ("M-e", spawn "urxvtc"),
+        ("M-<Return>", spawn "urxvtc"),
         ("M-g", goToSelected defaultGSConfig),
         ("M-j", windows W.focusUp),
         ("M-k", windows W.focusDown),
---         ("M-g", windowPromptGoto  defaultXPConfig),
         ("M-s", sshPrompt myXPConfig),
+        ("M-C-t", withFocused $ windows . W.sink),
         ("M-u", broadcastMessage ToggleMonitor >> refresh)
+        ] ++ [
+        ("M-"++[j], focusNth i) | (i,j) <- [0..4]`zip`"qwert"
         ]
 
     myMousekeys = [
@@ -69,17 +75,17 @@ main = do
         ]
 
 --     myLayoutHook = gaps [(U,g), (D,g), (R,g), (L,g)] layoutHookNoGaps where
+--         layoutHookNoGaps = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
 --         g = 5
---     
---     layoutHookNoGaps = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
 
     myTabbedLayout = tabbedAlways shrinkText (theme myTheme)
 
     myMagnifyLayout = magnifiercz (12%10) Grid
 
-    myGaps = let g = 7 in gaps [(U,0), (D,g), (R,g), (L,g)]
+    myGaps = let g = 7 in gaps [(U,0), (D,g), (R,g), (L,g)] myTabbedLayout
 
-    myLayoutHook = ModifiedLayout myClockMonitor $ (myGaps myTabbedLayout) ||| Full ||| tiled ||| myMagnifyLayout where
+    myLayoutHook = ModifiedLayout myClockMonitor layouts where 
+        layouts = myGaps ||| Full ||| tiled ||| myMagnifyLayout
         tiled = Tall 1 (3/100) (1/2)
 
 --     myLayoutHook = imageButtonDeco shrinkText defaultThemeWithImageButtons (layoutHook defaultConfig)
