@@ -149,6 +149,17 @@
         defaultUser = "ierton";
       };
     };
+
+    videoDrivers = [ "intel" "vesa" ];
+
+    monitorSection = ''
+      DisplaySize 223 125
+    '';
+
+    screenSection = ''
+      Option "UseEDID" "false"
+      Option "DPI" "116x121"
+    '';
   };
 
   fonts = {
@@ -227,6 +238,7 @@
     oxygen_gtk
     lxappearance
     skype_linux
+    xlibs.xev
 
     # xmonad stuff
     freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
@@ -241,6 +253,7 @@
     chrome.enableRealPlayer = true;
     chrome.jre = true;
     subversion.saslSupport = true;
+    freetype.useEncumberedCode = false; # true;
   };
 }
 
