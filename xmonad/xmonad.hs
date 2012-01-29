@@ -32,14 +32,11 @@ import XMonad.Util.Themes
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig
 import XMonad.Util.XSelection
+import XMonad.Util.Cursor
 import XMonad.Layout.ShowWName
 import XMonad.Hooks.FadeInactive
 
-main = do
-    spawn "cairo-clock"
-    xmonad myConfig
-
-    where
+main = xmonad myConfig where
 
     myConfig = myBaseConfig `additionalKeysP` myKeys `additionalMouseBindings` myMousekeys
 
@@ -50,6 +47,7 @@ main = do
         layoutHook = showWName myLayoutHook,
         manageHook = myManageHook,
         logHook = myLogHook,
+        startupHook = myStartupHook,
         terminal = "urxvtc"
         } 
 
@@ -73,6 +71,11 @@ main = do
         ((mod4Mask, button4), (\_ -> windows W.focusUp )),
         ((mod4Mask, button5), (\_ -> windows W.focusDown))
         ]
+
+    myStartupHook = do
+        spawn "xcompmgr"
+        spawn "cairo-clock"
+        setDefaultCursor xC_left_ptr
 
 --     myLayoutHook = gaps [(U,g), (D,g), (R,g), (L,g)] layoutHookNoGaps where
 --         layoutHookNoGaps = layoutHintsToCenter (Full) ||| tiled ||| magnify Grid
