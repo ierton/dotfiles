@@ -182,19 +182,21 @@
   environment.pathsToLink = ["/"];
 
   environment.systemPackages = with pkgs ; [
-    gcc gnumake
-    pkgconfig autoconf automake m4
-    flex bison 
-    vimHugeX
-    rxvt_unicode
-    wget
-    screen
-    gitAndTools.gitFull
-    subversion
-    ctags
-    mc
+    #gcc
+    #gnumake
+    #pkgconfig
+    #autoconf
+    #automake
+    #libtool
+    #intltool
+    #gettext
+    #m4
+    #cmake
+    #flex
+    #bison 
     psmisc
     iptables
+    dhcp
     nmap
     tcpdump
     pmutils
@@ -203,17 +205,24 @@
     acpid
     acpitool
     cpufrequtils
-    cmake
-    intltool
-    gettext
-    zip unzip unrar
+    zip
+    unzip
+    unrar
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
     #haskellPackages.xmonadContrib
     #haskellPackages.xmonadExtras
 
-    # GUIs
+    # Software
+    wget
+    screen
+    gitAndTools.gitFull
+    subversion
+    ctags
+    mc
+    rxvt_unicode
+    vimHugeX
     chromeWrapper
     glxinfo
     feh
@@ -226,27 +235,46 @@
     unclutter
     trayer
     xorg.xdpyinfo
+    xlibs.xev
     xfontsel
     xlsfonts
     djvulibre
     ghostscript
     djview4
     #evince
-    conky #Limited
+    conky
     dzen2
+    dmenu
     hicolor_icon_theme
     oxygen_gtk
     lxappearance
     skype_linux
-    xlibs.xev
+    cairoclock
 
-    # xmonad stuff
-    freetype fontconfig xlibs.xproto xlibs.libX11 xlibs.libXt
-    xlibs.libXft xlibs.libXext xlibs.libSM xlibs.libICE
-    xlibs.xextproto xlibs.libXrender xlibs.renderproto 
-    xlibs.libxkbfile xlibs.kbproto xlibs.libXrandr 
-    xlibs.randrproto
-    glew mesa
+    # Development libs
+    #xlibs.xproto
+    #xlibs.libX11
+    #xlibs.libXt
+    #xlibs.libXft
+    #xlibs.libXext
+    #xlibs.libSM
+    #xlibs.libICE
+    #xlibs.xextproto
+    #xlibs.libXrender
+    #xlibs.renderproto 
+    #xlibs.libxkbfile
+    #xlibs.kbproto
+    #xlibs.libXrandr 
+    #xlibs.randrproto
+    #glew
+    #mesa
+    #freetype
+    #fontconfig
+    #qt4
+    #glib
+    #slang
+    #e2fsprogs
+    #perl
   ];
 
   nixpkgs.config = {
