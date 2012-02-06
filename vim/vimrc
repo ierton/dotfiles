@@ -55,9 +55,6 @@ augroup vimrcEx
 	\ endif
 augroup END
 
-
-
-
 " General bindings
 nnoremap <F2> <ESC>:w<CR>
 inoremap <F2> <ESC>:w<CR>
@@ -83,6 +80,24 @@ vnoremap ! y:!<C-r>"<C-b><Right>
 " Easy paste
 nnoremap <Leader>i :set paste<CR>i
 nnoremap i :set nopaste<CR>i
+
+" Map <A-f>
+set <F13>=f
+set <S-F13>=а
+imap <F13> <C-o>e<C-o>a
+imap <S-F13> <C-o>e<C-o>a
+
+" Map <A-b>
+set <F14>=b
+set <S-F14>=и
+imap <F14> <C-o>b
+imap <S-F14> <C-o>b
+
+" Map <A-d>
+set <F15>=d
+set <S-F15>=в
+imap <F15> <C-o><C-v>ed
+imap <S-F15> <C-o><C-v>ed
 
 "{{{ X clipboard bindings
 if ( $DISPLAY != "" ) && has("x11")
