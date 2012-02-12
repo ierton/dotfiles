@@ -34,17 +34,21 @@ set encoding=utf-8
 set fileencodings=utf8,cp1251
 set t_Co=256
 set modeline
+set textwidth=80
 
 augroup vimrcEx
 	au!
 
-	au FileType cpp set textwidth=80
-	au FileType c set textwidth=80
-	au FileType text set textwidth=80
-	au Bufenter *.hs set expandtab  "In Haskell all tabs are spaces
-	au Bufenter *.lhs set expandtab  "In Haskell all tabs are spaces
-	au Bufenter *.cabal set expandtab  "In Haskell all tabs are spaces
 	au Bufenter * syntax sync minlines=50
+
+	"au FileType cpp set textwidth=80
+	"au FileType c set textwidth=80
+	"au FileType text set textwidth=80
+
+	au FileType *haskell set expandtab 
+	au FileType cabal set expandtab
+
+	au FileType mail set fo+=an
 
 	" When editing a file, always jump to the last known cursor position.
 	" Don't do it when the position is invalid or when inside an event handler
@@ -133,9 +137,6 @@ au BufWinEnter quickfix map <buffer> <C-o> :cold<cr>
 au BufWinEnter quickfix map <buffer> <C-i> :cnew<cr>
 au BufWinEnter quickfix map <buffer> <Leader>f <C-w>q
 au BufWinEnter quickfix map <buffer> q :q<cr>
-"au BufReadPost quickfix setlocal modifiable
-"            \ | silent exe 'g/^/s//\=line(".")." "/'
-"            \ | setlocal nomodifiable
 "}}}
 
 "Russian keymap {{{
