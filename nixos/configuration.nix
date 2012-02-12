@@ -15,6 +15,7 @@
   #boot.kernelPackages = pkgs.linuxPackages_3_0;
 
   boot.blacklistedKernelModules = [ 
+    "pcspkr"
     "wimax"
     "i2400m"
     "i2400m_usb"
@@ -29,6 +30,10 @@
   boot.kernelModules = [
     "acpi-cpufreq"
   ];
+
+  boot.extraModprobeConfig = ''
+    options snd-hda-intel model="ideapad"
+  '';
 
   boot.loader.grub = {
     # Use grub 2 as boot loader.
@@ -103,21 +108,6 @@
   # Add CUPS to print documents.
   services.printing.enable = true;
 
-  services.acpid = {
-    powerEventCommands = ''
-      ${pkgs.upstart}/sbin/poweroff
-    '';
-    lidEventCommands = ''
-      LID="/proc/acpi/button/lid/LID/state"
-      state=`cat $LID | ${pkgs.gawk}/bin/awk '{print $2}'`
-      case "$state" in
-        *open*) ;;
-        *close*) ${pkgs.pmutils}/sbin/pm-suspend ;;
-        *) logger -t lid-handler "Failed to detect lid state ($state)" ;;
-      esac
-    '';
-  };
-
   services.ntp = {
     enable = true;
     servers = [ "server.local" "0.pool.ntp.org" "1.pool.ntp.org" "2.pool.ntp.org" ];
@@ -126,10 +116,10 @@
   # Add XServer (default if you have used a graphical iso)
   services.xserver = {
     enable = true;
-    layout = "us,ru(winkeys)";
+    layout = "us,ru";
     xkbOptions = "eurosign:e, grp:alt_space_toggle, ctrl:swapcaps, grp_led:caps, ctrl:nocaps";
-    windowManager.xmonad.enable = true;
-    windowManager.default = "xmonad";
+    # windowManager.xmonad.enable = true;
+    # windowManager.default = "xmonad";
     exportConfiguration = true;
     # multitouch.enable = true; Doesn't work
     startOpenSSHAgent = true;
@@ -142,12 +132,22 @@
         '';
     };
 
+    #desktopManager.kde4.enable = true;
+    desktopManager.xfce.enable = true;
+
     displayManager = {
-      #job.logsXsession = true; Doesn't work
+
+      #kdm = {
+      #  enable = true;
+      #};
+
       slim = {
         enable = true;
         defaultUser = "ierton";
       };
+
+      #job.logsXsession = true; Doesn't work
+
     };
 
     videoDrivers = [ "intel" "vesa" ];
@@ -159,6 +159,20 @@
     screenSection = ''
       Option "UseEDID" "false"
       Option "DPI" "116x121"
+    '';
+  };
+
+  services.postfix = {
+    enable = true;
+    setSendmail = true;
+    # Thanks to http://rs20.mine.nu/w/2011/07/gmail-as-relay-host-in-postfix/
+    extraConfig = ''
+      relayhost=[smtp.gmail.com]:587
+      smtp_use_tls=yes
+      smtp_tls_CAfile=/etc/ssl/certs/ca-bundle.crt
+      smtp_sasl_auth_enable=yes
+      smtp_sasl_password_maps=hash:/etc/postfix.local/sasl_passwd
+      smtp_sasl_security_options=noanonymous
     '';
   };
 
@@ -182,18 +196,7 @@
   environment.pathsToLink = ["/"];
 
   environment.systemPackages = with pkgs ; [
-    #gcc
-    #gnumake
-    #pkgconfig
-    #autoconf
-    #automake
-    #libtool
-    #intltool
-    #gettext
-    #m4
-    #cmake
-    #flex
-    #bison 
+    # Basic tools
     psmisc
     iptables
     dhcp
@@ -208,15 +211,20 @@
     zip
     unzip
     unrar
+    openssl
+    cacert
+    w3m
+    wget
+    screen
+    mutt
+    fuse
 
     #haskellPackages.xmobar
     #haskellPackages.xmonad
     #haskellPackages.xmonadContrib
     #haskellPackages.xmonadExtras
 
-    # Software
-    wget
-    screen
+    # X11 apps
     gitAndTools.gitFull
     subversion
     ctags
@@ -224,6 +232,7 @@
     rxvt_unicode
     vimHugeX
     chromeWrapper
+    firefoxWrapper
     glxinfo
     feh
     trayer
@@ -231,7 +240,6 @@
     zathura
     xneur
     MPlayer
-    vimprobable2
     unclutter
     trayer
     xorg.xdpyinfo
@@ -241,47 +249,23 @@
     djvulibre
     ghostscript
     djview4
-    #evince
     conky
     dzen2
     dmenu
     hicolor_icon_theme
     oxygen_gtk
-    lxappearance
     skype_linux
     cairoclock
-
-    # Development libs
-    #xlibs.xproto
-    #xlibs.libX11
-    #xlibs.libXt
-    #xlibs.libXft
-    #xlibs.libXext
-    #xlibs.libSM
-    #xlibs.libICE
-    #xlibs.xextproto
-    #xlibs.libXrender
-    #xlibs.renderproto 
-    #xlibs.libxkbfile
-    #xlibs.kbproto
-    #xlibs.libXrandr 
-    #xlibs.randrproto
-    #glew
-    #mesa
-    #freetype
-    #fontconfig
-    #qt4
-    #glib
-    #slang
-    #e2fsprogs
-    #perl
+    tightvnc
   ];
 
   nixpkgs.config = {
     chrome.enableRealPlayer = true;
     chrome.jre = true;
-    subversion.saslSupport = true;
-    freetype.useEncumberedCode = false; # true;
+    #firefox.enableRealPlayer = true;
+    firefox.jre = true;
+    #subversion.saslSupport = false; #true;
+    #freetype.useEncumberedCode = false; # true;
   };
 }
 
