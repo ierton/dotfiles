@@ -1,0 +1,143 @@
+" Will not show menu and bookmarks tab
+"set go=Bbr
+" Will show menu and bookmarks tab
+" set go+=mTbB
+
+" To prevent ff focusing google's search 
+" input field on open
+"set focuscontent=on
+
+" Will highlight search results during typing
+"set incsearch=on
+
+" I want ignorecase to work without exceptions
+" set smartcase=off
+
+" Buggy for now
+set editor="urxvt -e vim '+set ft=mail'"
+
+"set toolbars=noaddons,bookmarks,nomenu,nonavigation,tabs
+
+"set titlestring="Mozilla Aurora"
+
+" Fullscreen-like commands
+"map <F10> :set go=brB<CR>
+"map <F11> :set go=brmTB<CR>
+map <F9> :set toolbars=noaddons,bookmarks,menu,navigation,tabs<CR>
+map <F11> :set toolbars=noaddons,nobookmarks,nomenu,nonavigation,tabs<CR>
+
+"Russian language keyboard mappings (UTF-8){{{
+map ё `
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+map Ё ~
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+map . /
+"}}}
+
+imap <A-b> <C-Left>
+imap <A-f> <C-Right>
+imap <A-d> <C-S-Right><Del>
+cmap <A-b> <C-Left>
+cmap <A-f> <C-Right>
+cmap <A-d> <C-S-Right><Del>
+
+imap <A-и> <C-Left>
+imap <A-а> <C-Right>
+imap <A-в> <C-S-Right><Del>
+cmap <A-и> <C-Left>
+cmap <A-а> <C-Right>
+cmap <A-в> <C-S-Right><Del>
+
+map gr gT
+map пк gT
+map пе gt
+
+map <A-q> gT
+map <A-й> gT
+map <A-w> gt
+map <A-ц> gt
+map <A-3> :tabmove +1<cr>
+map <A-`> :tabmove -1<cr>
+map <C-a>c :tabopen<cr>gh
+map <C-a>с :tabopen<cr>gh
+map <C-a>d :tabduplicate<cr>
+map <C-a>в :tabduplicate<cr>
+"map <C-v> <C-v><C-v>
+map <C-c> <C-v><C-c>
+map q :tabclose<cr>
+"map t :tabopen<cr>
+
+" Will focus left tab after closing
+map d D
+
+"map f F
+
+" Command line mappings
+cmap <C-p> <Up>
+cmap <C-n> <Down>
+
+" Autocommands
+" autocmd PageLoad linux.org.ru zoom 120
+
