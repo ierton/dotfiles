@@ -11,6 +11,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Actions.FlexibleResize as Flex
 import XMonad.Actions.WindowNavigation
 import XMonad.Actions.FocusNth
+import XMonad.Actions.Search
 import XMonad.Layout.Circle
 import XMonad.Layout.Grid
 import XMonad.Layout.Magnifier
@@ -59,12 +60,19 @@ main = xmonad myConfig where
         ("M-g", goToSelected defaultGSConfig),
         ("M-j", windows W.focusUp),
         ("M-k", windows W.focusDown),
-        ("M-s", sshPrompt myXPConfig),
+--         ("M-s", sshPrompt myXPConfig),
+        ("M-d", sshPrompt myXPConfig),
         ("M-C-t", withFocused $ windows . W.sink),
         ("M-u", broadcastMessage ToggleMonitor >> refresh)
         ] ++ [
         ("M-"++[j], focusNth i) | (i,j) <- [0..4]`zip`"qwert"
-        ]
+        ] ++ [
+        ("M-s " ++ k, promptSearch myXPConfig f) | (k,f) <- mySearchList ]
+
+    mySearchList :: [(String, SearchEngine)]
+    mySearchList = [ ("s", google)
+                   , ("w", wikipedia)
+                   ]
 
     myMousekeys = [
         ((mod4Mask, button3), (\w -> focus w >> Flex.mouseResizeWindow w)),
@@ -114,6 +122,7 @@ main = xmonad myConfig where
                                              , inactiveColor       = "#ff8000"
                                              , inactiveBorderColor = "#ff8000"
                                              , inactiveTextColor   = "black"
+                                             , decoHeight = 10
                                              }
            }
 
@@ -127,6 +136,7 @@ main = xmonad myConfig where
                    map (first $ (,) controlMask) -- control + <key>
                    [ (xK_p, moveHistory W.focusDown')
                    , (xK_n, moveHistory W.focusUp')
+                   , (xK_c, quit)
                    , (xK_y, getSelection >>= setInput )
                    ]
 
@@ -135,7 +145,7 @@ main = xmonad myConfig where
     myClockMonitor = monitor {
          -- Cairo-clock creates 2 windows with the same classname, thus also using title
          prop = ClassName "Cairo-clock" `And` Title "MacSlow's Cairo-Clock"
-       , rect = Rectangle (1024-100) (600 - 100) 100 100
+       , rect = Rectangle (1024-150) (50) 100 100
        , persistent = True
        , opacity = 0.6
        , visible = True
