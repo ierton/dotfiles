@@ -1,8 +1,6 @@
-" common settings
 syntax enable
 filetype plugin on
 filetype indent on
-"colorscheme elflord2
 colorscheme default
 let mapleader = "`"
 let maplocalleader = "`"
@@ -28,7 +26,6 @@ set guifont=Terminus\ 13
 set mouse=nir
 set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-" Sets tags filename
 set tags=tags;
 set encoding=utf-8
 set fileencodings=utf8,cp1251
@@ -36,28 +33,21 @@ set t_Co=256
 set modeline
 set textwidth=80
 
-augroup vimrcEx
-	au!
+au Bufenter * syntax sync minlines=50
 
-	au Bufenter * syntax sync minlines=50
+au FileType *haskell set expandtab 
+au FileType cabal set expandtab
 
-	"au FileType cpp set textwidth=80
-	"au FileType c set textwidth=80
-	"au FileType text set textwidth=80
+" Enable auto-paragraph-reformat, when editing emails
+au FileType mail set fo+=an
 
-	au FileType *haskell set expandtab 
-	au FileType cabal set expandtab
-
-	au FileType mail set fo+=an
-
-	" When editing a file, always jump to the last known cursor position.
-	" Don't do it when the position is invalid or when inside an event handler
-	" (happens when dropping a file on gvim).
-	au BufReadPost *
+" When editing a file, always jump to the last known cursor position.
+" Don't do it when the position is invalid or when inside an event handler
+" (happens when dropping a file on gvim).
+au BufReadPost *
 	\ if line("'\"") > 0 && line("'\"") <= line("$") |
 	\   exe "normal g`\"" |
 	\ endif
-augroup END
 
 " General bindings
 nnoremap <F2> <ESC>:w<CR>
@@ -79,142 +69,141 @@ nnoremap q <ESC>:qa<CR>
 " Visual mode tweaks
 vnoremap : y:<C-r>"<C-b>
 vnoremap ! y:!<C-r>"<C-b><Right>
-" vnoremap h y:<C-r>"<C-b>h <CR>
 
 " Easy paste
 nnoremap <Leader>i :set paste<CR>i
 nnoremap i :set nopaste<CR>i
 
-" Map <A-f>
-set <F13>=f
-set <S-F13>=а
-imap <F13> <C-o>e<C-o>a
-imap <S-F13> <C-o>e<C-o>a
+" Open quickfix window
+nnoremap <Leader>f :cope<CR>
 
-" Map <A-b>
-set <F14>=b
-set <S-F14>=и
-imap <F14> <C-o>b
-imap <S-F14> <C-o>b
+" make
+nnoremap <F5> :make<CR>
+inoremap <F5> <Esc>:make<CR>
 
-" Map <A-d>
-set <F15>=d
-set <S-F15>=в
-imap <F15> <C-o><C-v>ed
-imap <S-F15> <C-o><C-v>ed
+" Quicfix bindings {{{
+function! QFmap(a,b)
+	exe "au BufWinEnter quickfix map <buffer> " . a:a . " " . a:b
+endfunction
+command! -nargs=+ QFmap :call QFmap(<f-args>)
 
-"{{{ X clipboard bindings
-if ( $DISPLAY != "" ) && has("x11")
-	nnoremap <S-Ins> "+p
-	inoremap <S-Ins> <Esc>"+pa
-	vnoremap <C-Ins> "+y
+QFmap o <cr>
+QFmap J :cnext<cr>:copen<cr>
+QFmap K :cprevious<cr>:copen<cr>
+QFmap <C-o> :cold<cr>
+QFmap <C-i> :cnew<cr>
+QFmap <Leader>f <C-w>q
+QFmap q :q<cr>
+" }}}
+
+" Clipboard bindings {{{
+if has("x11")
 	vnoremap y "+y
 	vnoremap d "+d
 	vnoremap c "+c
 	vnoremap p "+p
-
 	nnoremap Y "+y$
 	nnoremap yy "+yy
-	nnoremap D "+D
-	nnoremap dd "+dd
-	nnoremap C "+C
-	nnoremap cc "+cc
-	nnoremap X "+X
-	nnoremap x "+x
 	nnoremap yw "+yw
-
 	nnoremap p "+p
 	nnoremap P "+P
 endif
-"}}}
+" }}}
 
-" {{{ Quicfix bindings
-nnoremap <Leader>f :cope<CR>
-au BufWinEnter quickfix map <buffer> o <cr>
-au BufWinEnter quickfix map <buffer> J :cnext<cr>:copen<cr>
-au BufWinEnter quickfix map <buffer> K :cprevious<cr>:copen<cr>
-au BufWinEnter quickfix map <buffer> <C-o> :cold<cr>
-au BufWinEnter quickfix map <buffer> <C-i> :cnew<cr>
-au BufWinEnter quickfix map <buffer> <Leader>f <C-w>q
-au BufWinEnter quickfix map <buffer> q :q<cr>
-"}}}
+" Russian layout bindings {{{
+function! KBmap(a,b)
+	exe "map " . a:a . " " . a:b
+	exe "cmap " . a:a . " " . a:b
+endfunction
+command! -nargs=+ KBmap :call KBmap(<f-args>)
 
-"Russian keymap {{{
-map ё `
-map й q
-map ц w
-map у e
-map к r
-map е t
-map н y
+KBmap ё `
+KBmap й q
+KBmap ц w
+KBmap у e
+KBmap к r
+KBmap е t
+KBmap н y
 map нн yy
-map г u
-map ш i
-map щ o
-map з p
-map х [
-map ъ ]
-
-map ф a
-map ы s
-map в d
-map а f
-map п g
-map р h
-map о j
-map л k
-map д l
-map ж ;
-map э '
-
-map я z
-map ч x
-map с c
-map м v
-map и b
-map т n
-map ь m
-map б ,
-map ю .
-
-map Ё ~
-map Й Q
-map Ц W
-map У E
-map К R
-map Е T
-map Н Y
-map Г U
-map Ш I
-map Щ O
-map З P
-map Х {
-map Ъ }
-
-map Ф A
-map Ы S
-map В D
-map А F
-map П G
-map Р H
-map О J
-map Л K
-map Д L
-map Ж :
-map Э "
-
-map Я Z
-map Ч X
-map С C
-map М V
-map И B
-map Т N
-map Ь M
-map Б <
-map Ю >
+KBmap г u
+KBmap ш i
+KBmap щ o
+KBmap з p
+KBmap х [
+KBmap ъ ]
+KBmap ф a
+KBmap ы s
+KBmap в d
+map вв dd
+KBmap а f
+KBmap п g
+KBmap р h
+KBmap о j
+KBmap л k
+KBmap д l
+KBmap ж ;
+KBmap э '
+KBmap я z
+KBmap ч x
+KBmap с c
+KBmap м v
+KBmap и b
+KBmap т n
+KBmap ь m
+KBmap б ,
+KBmap ю .
+KBmap Ё ~
+KBmap Й Q
+KBmap Ц W
+KBmap У E
+KBmap К R
+KBmap Е T
+KBmap Н Y
+KBmap Г U
+KBmap Ш I
+KBmap Щ O
+KBmap З P
+KBmap Х {
+KBmap Ъ }
+KBmap Ф A
+KBmap Ы S
+KBmap В D
+KBmap А F
+KBmap П G
+KBmap Р H
+KBmap О J
+KBmap Л K
+KBmap Д L
+KBmap Ж :
+KBmap Э "
+KBmap Я Z
+KBmap Ч X
+KBmap С C
+KBmap М V
+KBmap И B
+KBmap Т N
+KBmap Ь M
+KBmap Б <
+KBmap Ю >
 "}}}
 
-" Find file in current directory and edit it."{{{
+" Readline-style bindings {{{
+" Map <A-f>
+imap f <C-o>e<C-o>a
+cmap f <S-Right>
+KBmap а f
+
+" Map <A-b>
+imap b <C-o>b
+cmap b <S-Left>
+KBmap и b
+
+" Map <A-d>
+imap d <C-o><C-v>ed
+KBmap в d
+"}}}
+
+" Find file in current directory and edit it. {{{
 function! Find(...)
   let path="."
   if a:0==2
@@ -253,9 +242,6 @@ endfunction
 command! -nargs=* Find :call Find(<f-args>)
 " }}}
 
-"""""""""""""""""""""""""""
-" Plugins section
-"""""""""""""""""""""""""""
 " TagList
 let g:Tlist_Use_Horiz_Window = 1
 let g:Tlist_Show_One_File = 1
@@ -275,16 +261,12 @@ inoremap <Leader>N <ESC>:NERDTreeFind<CR>
 nnoremap <Leader>e <Esc>:BufExplorer<CR>
 inoremap <Leader>e <Esc>:BufExplorer<CR>
 
-" make
-nnoremap <F5> :make<CR>
-inoremap <F5> <Esc>:make<CR>
-
 " EasyGrep
 let g:EasyGrepRecursive = 1
 let g:EasyGrepMode = 2
 
 " Haskell
-let g:haddock_browser = "/usr/bin/midori"
+let g:haddock_browser = "firefox"
 let g:haddock_browser_callformat = '%s %s'
 let g:haskell_indent_case = 0
 let g:haskell_indent_if = 0
@@ -295,10 +277,10 @@ let g:local_vimrc = '.vimrc_local.vim'
 " GetLatestVimScripts
 let g:GetLatestVimScripts_allowautoinstall = 1
 
-" comments
+" Comments
 map <leader>c <C-C>
 map <leader>x <C-X>
 
-" opener
-let g:opener_cmd = "gnome-open"
+" Opener
+let g:opener_cmd = "xdg-open"
 
