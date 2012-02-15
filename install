@@ -1,0 +1,19 @@
+#!/bin/sh
+
+die() { echo $@ >&2 ; exit 1 ; }
+
+LN="ln -s -v --backup=numbered"
+cd `dirname $0`
+CWD=`pwd`
+export LANG=C
+
+link() {
+	local what=$1
+	local where=$2
+
+	$LN $what $where
+}
+
+link $CWD/vim/vimrc ~/.vimrc
+link $CWD/vimperator/vimperatorrc ~/.vimperatorrc
+link $CWD/mutt/muttrc ~/.muttrc
