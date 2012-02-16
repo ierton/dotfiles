@@ -257,12 +257,14 @@
     skype_linux
     cairoclock
     tightvnc
+    thunderbird
+    wine
   ];
 
   nixpkgs.config = {
     chrome.enableRealPlayer = true;
     chrome.jre = true;
-    #firefox.enableRealPlayer = true;
+    firefox.enableRealPlayer = true;
     firefox.jre = true;
     #subversion.saslSupport = false; #true;
     #freetype.useEncumberedCode = false; # true;
