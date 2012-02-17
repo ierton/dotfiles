@@ -188,19 +188,23 @@ KBmap Ю >
 "}}}
 
 " Readline-style bindings {{{
+" FIXME: Works ok for console version of vim only. They actually maps
+" <Esc><key>. That causes problems in normal mode.
 " Map <A-f>
 imap f <C-o>e<C-o>a
 cmap f <S-Right>
-KBmap а f
+imap а <C-o>e<C-o>a
+cmap а <S-Right>
 
 " Map <A-b>
 imap b <C-o>b
 cmap b <S-Left>
-KBmap и b
+imap и <C-o>b
+cmap и <S-Left>
 
 " Map <A-d>
 imap d <C-o><C-v>ed
-KBmap в d
+imap в <C-o><C-v>ed
 "}}}
 
 " Find file in current directory and edit it. {{{
