@@ -1,4 +1,4 @@
-# Edit this configuration file which defines what would be installed on the
+## Edit this configuration file which defines what would be installed on the
 # system.  To Help while choosing option value, you can watch at the manual
 # page of configuration.nix or at the last chapter of the manual available
 # on the virtual console 8 (Alt+F8).
@@ -28,12 +28,14 @@
   ];
 
   boot.kernelModules = [
-    "acpi-cpufreq"
+    "acpi-cpufreq" "configs"
   ];
 
   boot.extraModprobeConfig = ''
     options snd-hda-intel model="ideapad"
   '';
+
+  boot.extraKernelParams = ["nohpet"];
 
   boot.loader.grub = {
     # Use grub 2 as boot loader.
@@ -57,7 +59,7 @@
   networking = {
     hostName = "pokemon";
     interfaceMonitor.enable = false;
-    enableWLAN = false;
+    wireless.enable = false;
     useDHCP = false;
     wicd.enable = true;
   };
@@ -152,14 +154,14 @@
 
     videoDrivers = [ "intel" "vesa" ];
 
-    monitorSection = ''
-      DisplaySize 223 125
-    '';
+    #monitorSection = ''
+      #DisplaySize 223 125
+    #'';
 
-    screenSection = ''
-      Option "UseEDID" "false"
-      Option "DPI" "116x121"
-    '';
+    #screenSection = ''
+      #Option "UseEDID" "false"
+      #Option "DPI" "116x121"
+    #'';
   };
 
   services.postfix = {
@@ -218,11 +220,9 @@
     screen
     mutt
     fuse
-
-    #haskellPackages.xmobar
-    #haskellPackages.xmonad
-    #haskellPackages.xmonadContrib
-    #haskellPackages.xmonadExtras
+    bashCompletion
+    irssi
+    mpg321
 
     # X11 apps
     gitAndTools.gitFull
@@ -238,6 +238,7 @@
     trayer
     xcompmgr
     zathura
+    evince
     xneur
     MPlayer
     unclutter
@@ -255,10 +256,14 @@
     hicolor_icon_theme
     oxygen_gtk
     skype_linux
-    cairoclock
+    #cairoclock
     tightvnc
     thunderbird
     wine
+    xfce.xarchiver
+    vlc
+    easytag
+    gqview
   ];
 
   nixpkgs.config = {
