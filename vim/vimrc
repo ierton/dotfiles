@@ -32,10 +32,12 @@ set fileencodings=utf8,cp1251
 set t_Co=256
 set modeline
 set textwidth=80
+set timeoutlen=300
 
 au Bufenter * syntax sync minlines=50
 
 au FileType *haskell set expandtab 
+au FileType *haskell set smartindent
 au FileType cabal set expandtab
 
 " Enable auto-paragraph-reformat, when editing emails
@@ -50,9 +52,17 @@ au BufReadPost *
 	\ endif
 
 " General bindings
+inoremap <Leader><Leader> <Leader>
+inoremap <Esc><Esc> <Esc>
+
+" Save
 nnoremap <F2> <ESC>:w<CR>
 inoremap <F2> <ESC>:w<CR>
-inoremap <Leader><Leader> <Leader>
+
+" Reformat
+nnoremap <F3> gqap
+inoremap <F3> <C-o>gqap
+vnoremap <F3> gq
 
 " Fast command line
 nnoremap ! :!
@@ -63,8 +73,8 @@ nnoremap k gk
 nnoremap Y y$
 
 " Quick quit
-nnoremap <ESC><ESC> <ESC>:qa<CR>
-nnoremap q <ESC>:qa<CR>
+nnoremap <ESC><ESC><ESC><ESC> :qa<CR>
+nnoremap q <ESC>:q<CR>
 
 " Visual mode tweaks
 vnoremap : y:<C-r>"<C-b>
@@ -105,6 +115,7 @@ if has("x11")
 	nnoremap Y "+y$
 	nnoremap yy "+yy
 	nnoremap yw "+yw
+	nnoremap dd "+dd
 	nnoremap p "+p
 	nnoremap P "+P
 endif
@@ -113,7 +124,9 @@ endif
 " Russian layout bindings {{{
 function! KBmap(a,b)
 	exe "map " . a:a . " " . a:b
+	exe "imap <Esc>" . a:a . " <Esc>" . a:b
 	exe "cmap " . a:a . " " . a:b
+	exe "cmap <Esc>" . a:a . " <Esc>" . a:b
 endfunction
 command! -nargs=+ KBmap :call KBmap(<f-args>)
 
@@ -137,6 +150,8 @@ KBmap в d
 map вв dd
 KBmap а f
 KBmap п g
+map пй gq
+map пйй gqq
 KBmap р h
 KBmap о j
 KBmap л k
@@ -144,6 +159,8 @@ KBmap д l
 KBmap ж ;
 KBmap э '
 KBmap я z
+map ящ zo
+map яс zc
 KBmap ч x
 KBmap с c
 KBmap м v
@@ -191,20 +208,15 @@ KBmap Ю >
 " FIXME: Works ok for console version of vim only. They actually maps
 " <Esc><key>. That causes problems in normal mode.
 " Map <A-f>
-imap f <C-o>e<C-o>a
-cmap f <S-Right>
-imap а <C-o>e<C-o>a
-cmap а <S-Right>
+imap <Esc>f <C-o>e<C-o>a
+cmap <Esc>f <S-Right>
 
 " Map <A-b>
-imap b <C-o>b
-cmap b <S-Left>
-imap и <C-o>b
-cmap и <S-Left>
+imap <Esc>b <C-o>b
+cmap <Esc>b <S-Left>
 
 " Map <A-d>
-imap d <C-o><C-v>ed
-imap в <C-o><C-v>ed
+imap <Esc>d <C-o>ved
 "}}}
 
 " Find file in current directory and edit it. {{{
@@ -258,8 +270,7 @@ let g:NERDTreeWinSize=25
 let g:NERDTreeIgnore=['\.o$', '\.ko$', '^cscope', '\.hi']
 nnoremap <Leader>n <ESC>:NERDTreeToggle<CR>
 inoremap <Leader>n <ESC>:NERDTreeToggle<CR>
-nnoremap <Leader>N <ESC>:NERDTreeFind<CR>
-inoremap <Leader>N <ESC>:NERDTreeFind<CR>
+command -nargs=0 NF :NERDTreeFind
 
 " BufferExplorer
 nnoremap <Leader>e <Esc>:BufExplorer<CR>
