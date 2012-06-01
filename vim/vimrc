@@ -2,6 +2,7 @@ syntax enable
 filetype plugin on
 filetype indent on
 colorscheme default
+
 let mapleader = "`"
 let maplocalleader = "`"
 
@@ -21,7 +22,7 @@ set incsearch
 set ignorecase
 set formatoptions+=ro
 set cinoptions+=g0,(4
-set nohlsearch
+set hlsearch
 set guifont=Terminus\ 13
 set mouse=nir
 set laststatus=2
@@ -36,12 +37,12 @@ set timeoutlen=300
 
 au Bufenter * syntax sync minlines=50
 
-au FileType *haskell set expandtab 
+au FileType *haskell set expandtab
 au FileType *haskell set smartindent
 au FileType cabal set expandtab
 
 " Enable auto-paragraph-reformat, when editing emails
-au FileType mail set fo+=an
+au FileType mail set formatoptions+=an
 
 " When editing a file, always jump to the last known cursor position.
 " Don't do it when the position is invalid or when inside an event handler
@@ -50,6 +51,9 @@ au BufReadPost *
 	\ if line("'\"") > 0 && line("'\"") <= line("$") |
 	\   exe "normal g`\"" |
 	\ endif
+
+highlight ExtraWhitespace ctermbg=red guibg=red
+au Syntax * syn match ExtraWhitespace /\s\+$/
 
 " General bindings
 inoremap <Leader><Leader> <Leader>
@@ -82,7 +86,6 @@ vnoremap ! y:!<C-r>"<C-b><Right>
 
 " Easy paste
 nnoremap <Leader>i :set paste<CR>i
-nnoremap i :set nopaste<CR>i
 
 " Open quickfix window
 nnoremap <Leader>f :cope<CR>
