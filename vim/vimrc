@@ -94,6 +94,9 @@ nnoremap <Leader>f :cope<CR>
 nnoremap <F5> :make<CR>
 inoremap <F5> <Esc>:make<CR>
 
+" Tabs
+map gr gT
+
 " Quicfix bindings {{{
 function! QFmap(a,b)
 	exe "au BufWinEnter quickfix map <buffer> " . a:a . " " . a:b
