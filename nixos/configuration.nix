@@ -14,7 +14,7 @@
 
   #boot.kernelPackages = pkgs.linuxPackages_3_0;
 
-  boot.blacklistedKernelModules = [ 
+  boot.blacklistedKernelModules = [
     "pcspkr"
     "wimax"
     "i2400m"
@@ -223,6 +223,9 @@
     bashCompletion
     irssi
     mpg321
+    catdoc
+    graphviz
+    tig
 
     # X11 apps
     gitAndTools.gitFull
@@ -256,7 +259,7 @@
     hicolor_icon_theme
     oxygen_gtk
     skype_linux
-    #cairoclock
+    cairoclock
     tightvnc
     thunderbird
     wine
@@ -264,6 +267,14 @@
     vlc
     easytag
     gqview
+    gimp
+    gimpPlugins
+    #openoffice
+    #abiword
+    #linuxPackages.virtualbox
+    #linuxPackages.virtualboxGuestAdditions
+    #impressive
+    #pianobooster
   ];
 
   nixpkgs.config = {
