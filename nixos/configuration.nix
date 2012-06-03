@@ -65,7 +65,22 @@
   };
 
   security = {
-    sudo.configFile = "root ALL=(ALL) SETENV: ALL\n%wheel ALL=(ALL) SETENV: NOPASSWD: ALL\n";
+    #sudo.configFile = "root ALL=(ALL) SETENV: ALL\n%wheel ALL=(ALL) SETENV: NOPASSWD: ALL\n";
+    sudo.configFile =
+        ''
+          # Don't edit this file. Set nixos option security.sudo.configFile instead
+
+          # env vars to keep for root and %wheel also if not explicitly set
+          Defaults:root,%wheel env_keep+=LOCALE_ARCHIVE
+          Defaults:root,%wheel env_keep+=NIX_PATH
+          Defaults:root,%wheel env_keep+=TERMINFO_DIRS
+
+          # "root" is allowed to do anything.
+          root        ALL=(ALL) SETENV: ALL
+
+          # Users in the "wheel" group can do anything.
+          %wheel      ALL=(ALL) SETENV: NOPASSWD: ALL
+       '';
   };
 
   fileSystems = [
@@ -226,6 +241,7 @@
     catdoc
     graphviz
     tig
+    enca
 
     # X11 apps
     gitAndTools.gitFull
@@ -268,13 +284,16 @@
     easytag
     gqview
     gimp
-    gimpPlugins
+    #gimpPlugins
+    #gnome_mplayer
     #openoffice
     #abiword
     #linuxPackages.virtualbox
     #linuxPackages.virtualboxGuestAdditions
     #impressive
     #pianobooster
+
+    devenv
   ];
 
   nixpkgs.config = {
@@ -284,6 +303,48 @@
     firefox.jre = true;
     #subversion.saslSupport = false; #true;
     #freetype.useEncumberedCode = false; # true;
+    packageOverrides = pkgs: {
+      libass = pkgs.libass.override {
+        enca = null;
+      };
+
+      devenv = pkgs.myEnvFun {
+        name = "dev";
+        buildInputs = with pkgs; [
+          autoconf
+          automake
+          gettext
+          intltool
+          libtool
+          pkgconfig
+          perl
+          curl
+          sqlite
+          cmake
+          qt4
+          python
+          glew
+          mesa
+          freetype
+          fontconfig
+          ncurses
+          xlibs.xproto
+          xlibs.libX11
+          xlibs.libXt
+          xlibs.libXft
+          xlibs.libXext
+          xlibs.libSM
+          xlibs.libICE
+          xlibs.xextproto
+          xlibs.libXrender
+          xlibs.renderproto
+          xlibs.libxkbfile
+          xlibs.kbproto
+          xlibs.libXrandr
+          xlibs.randrproto
+        ];
+      };
+    };
   };
 }
 
