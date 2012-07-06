@@ -1,4 +1,4 @@
-## Edit this configuration file which defines what would be installed on the
+# Edit this configuration file which defines what would be installed on the
 # system.  To Help while choosing option value, you can watch at the manual
 # page of configuration.nix or at the last chapter of the manual available
 # on the virtual console 8 (Alt+F8).
@@ -14,8 +14,7 @@
 
   #boot.kernelPackages = pkgs.linuxPackages_3_0;
 
-  boot.blacklistedKernelModules = [
-    "pcspkr"
+  boot.blacklistedKernelModules = [ 
     "wimax"
     "i2400m"
     "i2400m_usb"
@@ -28,14 +27,8 @@
   ];
 
   boot.kernelModules = [
-    "acpi-cpufreq" "configs"
+    "acpi-cpufreq"
   ];
-
-  boot.extraModprobeConfig = ''
-    options snd-hda-intel model="ideapad"
-  '';
-
-  boot.extraKernelParams = ["nohpet"];
 
   boot.loader.grub = {
     # Use grub 2 as boot loader.
@@ -59,28 +52,13 @@
   networking = {
     hostName = "pokemon";
     interfaceMonitor.enable = false;
-    wireless.enable = false;
+    enableWLAN = false;
     useDHCP = false;
     wicd.enable = true;
   };
 
   security = {
-    #sudo.configFile = "root ALL=(ALL) SETENV: ALL\n%wheel ALL=(ALL) SETENV: NOPASSWD: ALL\n";
-    sudo.configFile =
-        ''
-          # Don't edit this file. Set nixos option security.sudo.configFile instead
-
-          # env vars to keep for root and %wheel also if not explicitly set
-          Defaults:root,%wheel env_keep+=LOCALE_ARCHIVE
-          Defaults:root,%wheel env_keep+=NIX_PATH
-          Defaults:root,%wheel env_keep+=TERMINFO_DIRS
-
-          # "root" is allowed to do anything.
-          root        ALL=(ALL) SETENV: ALL
-
-          # Users in the "wheel" group can do anything.
-          %wheel      ALL=(ALL) SETENV: NOPASSWD: ALL
-       '';
+    sudo.configFile = "root ALL=(ALL) SETENV: ALL\n%wheel ALL=(ALL) SETENV: NOPASSWD: ALL\n";
   };
 
   fileSystems = [
@@ -125,6 +103,21 @@
   # Add CUPS to print documents.
   services.printing.enable = true;
 
+  services.acpid = {
+    powerEventCommands = ''
+      ${pkgs.upstart}/sbin/poweroff
+    '';
+    lidEventCommands = ''
+      LID="/proc/acpi/button/lid/LID/state"
+      state=`cat $LID | ${pkgs.gawk}/bin/awk '{print $2}'`
+      case "$state" in
+        *open*) ;;
+        *close*) ${pkgs.pmutils}/sbin/pm-suspend ;;
+        *) logger -t lid-handler "Failed to detect lid state ($state)" ;;
+      esac
+    '';
+  };
+
   services.ntp = {
     enable = true;
     servers = [ "server.local" "0.pool.ntp.org" "1.pool.ntp.org" "2.pool.ntp.org" ];
@@ -133,10 +126,10 @@
   # Add XServer (default if you have used a graphical iso)
   services.xserver = {
     enable = true;
-    layout = "us,ru";
+    layout = "us,ru(winkeys)";
     xkbOptions = "eurosign:e, grp:alt_space_toggle, ctrl:swapcaps, grp_led:caps, ctrl:nocaps";
-    # windowManager.xmonad.enable = true;
-    # windowManager.default = "xmonad";
+    windowManager.xmonad.enable = true;
+    windowManager.default = "xmonad";
     exportConfiguration = true;
     # multitouch.enable = true; Doesn't work
     startOpenSSHAgent = true;
@@ -149,47 +142,23 @@
         '';
     };
 
-    #desktopManager.kde4.enable = true;
-    desktopManager.xfce.enable = true;
-
     displayManager = {
-
-      #kdm = {
-      #  enable = true;
-      #};
-
+      #job.logsXsession = true; Doesn't work
       slim = {
         enable = true;
         defaultUser = "ierton";
       };
-
-      #job.logsXsession = true; Doesn't work
-
     };
 
     videoDrivers = [ "intel" "vesa" ];
 
-    #monitorSection = ''
-      #DisplaySize 223 125
-    #'';
+    monitorSection = ''
+      DisplaySize 223 125
+    '';
 
-    #screenSection = ''
-      #Option "UseEDID" "false"
-      #Option "DPI" "116x121"
-    #'';
-  };
-
-  services.postfix = {
-    enable = true;
-    setSendmail = true;
-    # Thanks to http://rs20.mine.nu/w/2011/07/gmail-as-relay-host-in-postfix/
-    extraConfig = ''
-      relayhost=[smtp.gmail.com]:587
-      smtp_use_tls=yes
-      smtp_tls_CAfile=/etc/ssl/certs/ca-bundle.crt
-      smtp_sasl_auth_enable=yes
-      smtp_sasl_password_maps=hash:/etc/postfix.local/sasl_passwd
-      smtp_sasl_security_options=noanonymous
+    screenSection = ''
+      Option "UseEDID" "false"
+      Option "DPI" "116x121"
     '';
   };
 
@@ -213,7 +182,18 @@
   environment.pathsToLink = ["/"];
 
   environment.systemPackages = with pkgs ; [
-    # Basic tools
+    #gcc
+    #gnumake
+    #pkgconfig
+    #autoconf
+    #automake
+    #libtool
+    #intltool
+    #gettext
+    #m4
+    #cmake
+    #flex
+    #bison 
     psmisc
     iptables
     dhcp
@@ -228,23 +208,15 @@
     zip
     unzip
     unrar
-    openssl
-    cacert
-    w3m
+
+    #haskellPackages.xmobar
+    #haskellPackages.xmonad
+    #haskellPackages.xmonadContrib
+    #haskellPackages.xmonadExtras
+
+    # Software
     wget
     screen
-    mutt
-    fuse
-    bashCompletion
-    irssi
-    mpg321
-    catdoc
-    graphviz
-    tig
-    enca
-    #apcupsd
-
-    # X11 apps
     gitAndTools.gitFull
     subversion
     ctags
@@ -252,14 +224,14 @@
     rxvt_unicode
     vimHugeX
     chromeWrapper
-    firefoxWrapper
     glxinfo
     feh
+    trayer
     xcompmgr
     zathura
-    evince
     xneur
     MPlayer
+    vimprobable2
     unclutter
     trayer
     xorg.xdpyinfo
@@ -269,84 +241,47 @@
     djvulibre
     ghostscript
     djview4
-    #conky
-    #dzen2
-    #dmenu
+    #evince
+    conky
+    dzen2
+    dmenu
     hicolor_icon_theme
     oxygen_gtk
+    lxappearance
     skype_linux
     cairoclock
-    tightvnc
-    thunderbird
-    wine
-    xfce.xarchiver
-    vlc
-    easytag
-    gqview
-    #gimp_2_8
-    libreoffice
-    #gimpPlugins
-    #gnome_mplayer
-    #abiword
-    #linuxPackages.virtualbox
-    #linuxPackages.virtualboxGuestAdditions
-    #impressive
-    #pianobooster
-    pidgin
 
-    devenv
+    # Development libs
+    #xlibs.xproto
+    #xlibs.libX11
+    #xlibs.libXt
+    #xlibs.libXft
+    #xlibs.libXext
+    #xlibs.libSM
+    #xlibs.libICE
+    #xlibs.xextproto
+    #xlibs.libXrender
+    #xlibs.renderproto 
+    #xlibs.libxkbfile
+    #xlibs.kbproto
+    #xlibs.libXrandr 
+    #xlibs.randrproto
+    #glew
+    #mesa
+    #freetype
+    #fontconfig
+    #qt4
+    #glib
+    #slang
+    #e2fsprogs
+    #perl
   ];
 
   nixpkgs.config = {
     chrome.enableRealPlayer = true;
     chrome.jre = true;
-    firefox.enableRealPlayer = true;
-    firefox.jre = true;
-    #subversion.saslSupport = false; #true;
-    #freetype.useEncumberedCode = false; # true;
-    packageOverrides = pkgs: {
-      libass = pkgs.libass.override {
-        enca = null;
-      };
-
-      devenv = pkgs.myEnvFun {
-        name = "dev";
-        buildInputs = with pkgs; [
-          autoconf
-          automake
-          gettext
-          intltool
-          libtool
-          pkgconfig
-          perl
-          curl
-          sqlite
-          cmake
-          qt4
-          python
-          glew
-          mesa
-          freetype
-          fontconfig
-          ncurses
-          zlib
-          xlibs.xproto
-          xlibs.libX11
-          xlibs.libXt
-          xlibs.libXft
-          xlibs.libXext
-          xlibs.libSM
-          xlibs.libICE
-          xlibs.xextproto
-          xlibs.libXrender
-          xlibs.renderproto
-          xlibs.libxkbfile
-          xlibs.kbproto
-          xlibs.libXrandr
-          xlibs.randrproto
-        ];
-      };
-    };
+    subversion.saslSupport = true;
+    freetype.useEncumberedCode = false; # true;
   };
 }
 

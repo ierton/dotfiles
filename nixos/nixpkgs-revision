@@ -1,0 +1,16 @@
+#!/bin/sh
+
+NIXOS=~/.nix-defexpr/channels/nixos
+
+LNK=`readlink $NIXOS`
+DIR=`dirname $LNK`
+FN=`basename $DIR`
+REV=`echo $FN | sed 's/.*-\(.*\)$/\1/'`
+
+if test -z "$REV" ; then
+	echo "nix-from-channel: something is wrong"
+	exit 1;
+fi
+
+echo $REV
+
