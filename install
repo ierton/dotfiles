@@ -11,9 +11,15 @@ link() {
 	local what=$1
 	local where=$2
 
+	test -f "$where" && {
+		mv "$where" "$where.local" ||
+			die "Unable to backup $where"
+	}
+
 	$LN $what $where
 }
 
 link $CWD/vim/vimrc ~/.vimrc
 link $CWD/vimperator/vimperatorrc ~/.vimperatorrc
 link $CWD/mutt/muttrc ~/.muttrc
+link $CWD/X/Xresources ~/.Xresources

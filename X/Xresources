@@ -1,0 +1,45 @@
+URxvt*meta8: false
+URxvt*transparent: false
+!URxvt*fadeColor: #ffffff
+!URxvt*shading: -96
+!URxvt*blurRadius: 8
+URxvt*perl-ext: default,-searchable-scrollback
+URxvt*scrollBar: false
+URxvt*foreground: black
+URxvt*internalBorder: 0
+URxvt*color0: #222222
+URxvt*color12: #5C5CFF
+URxvt*background: #ffffff
+URxvt*font:-*-terminus-medium-*-normal-*-20-*-*-*-*-*-*-u
+URxvt*boldFont:-*-terminus-bold-*-normal-*-20-*-*-*-*-*-*-u
+URxvt*loginShell: true
+URxvt*keysym.Escape: \033\033
+!URxvt*keysym.Meta-f: \033[1;5C
+!URxvt*keysym.Meta-b: \033[1;5D
+!URxvt*keysym.Meta-0x6c1: \033[1;5C
+!URxvt*keysym.Meta-0x6c9: \033[1;5D
+
+XTerm*utf8: 1
+XTerm*loginShell: true
+XTerm*background: white
+XTerm*foreground: black
+XTerm*font:-*-terminus-medium-*-normal-*-20-*-*-*-*-*-*-u
+XTerm*boldFont:-*-terminus-bold-*-normal-*-20-*-*-*-*-*-*-u
+XTerm*scrollBar: False
+XTerm*saveLines: 1000
+XTerm*eightBitInput: True
+XTerm*metaSendsEscape: True
+!XTerm*VT100.eightBitInput: True
+!XTerm*VT100.eightBitOutput: True
+XTerm*VT100.translations: #override \n\
+	<Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
+	<Btn2Up>: insert-selection(SELECT, CLIPBOARD, CUT_BUFFER0) \n\
+
+xpdf*fontList: -*-fixed-medium-r-*-*-*-u:
+
+!Xft.dpi: 108
+!Xft.hinting: true
+!Xft.hintstyle: hintslight
+!Xft.antialias: true
+!Xft.rgba: none
+
