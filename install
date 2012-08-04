@@ -23,3 +23,5 @@ link $CWD/vim/vimrc ~/.vimrc
 link $CWD/vimperator/vimperatorrc ~/.vimperatorrc
 link $CWD/mutt/muttrc ~/.muttrc
 link $CWD/X/Xresources ~/.Xresources
+link $CWD/screen/screenrc ~/.screenrc
+
