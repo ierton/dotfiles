@@ -24,7 +24,7 @@ set formatoptions+=ro
 set cinoptions+=g0,(4
 set hlsearch
 set guifont=Terminus\ 13
-set mouse=nir
+set mouse=nirv
 set laststatus=2
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 set tags=tags;
