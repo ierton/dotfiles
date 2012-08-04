@@ -220,8 +220,6 @@
     nmap
     tcpdump
     pmutils
-    haskellPackages.ghc
-    haskellPackages.cabalInstall
     acpid
     acpitool
     cpufrequtils
@@ -243,6 +241,8 @@
     tig
     enca
     #apcupsd
+    tftp_hpa
+    unetbootin
 
     # X11 apps
     gitAndTools.gitFull
@@ -251,7 +251,7 @@
     mc
     rxvt_unicode
     vimHugeX
-    chromeWrapper
+    #chromeWrapper
     firefoxWrapper
     glxinfo
     feh
@@ -293,8 +293,17 @@
     #impressive
     #pianobooster
     pidgin
+    vimprobable2Wrapper
 
     devenv
+
+    (pkgs.haskellPackages.ghcWithPackages (self : [
+        self.haskellPlatform
+        self.happstackServer
+        self.happstackHamlet
+        self.happstackUtil
+        self.cabalInstall
+    ]))
   ];
 
   nixpkgs.config = {
