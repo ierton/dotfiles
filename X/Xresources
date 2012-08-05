@@ -1,15 +1,16 @@
 URxvt*meta8: false
 URxvt*transparent: false
-!URxvt*fadeColor: #ffffff
-!URxvt*shading: -96
+URxvt*fadeColor: #ffffff
+URxvt*shading: -96
 !URxvt*blurRadius: 8
 URxvt*perl-ext: default,-searchable-scrollback
 URxvt*scrollBar: false
-URxvt*foreground: black
+URxvt*foreground: grey
 URxvt*internalBorder: 0
 URxvt*color0: #222222
 URxvt*color12: #5C5CFF
-URxvt*background: #ffffff
+URxvt*background: #222222
+!URxvt*background: #222222
 URxvt*font:-*-terminus-medium-*-normal-*-20-*-*-*-*-*-*-u
 URxvt*boldFont:-*-terminus-bold-*-normal-*-20-*-*-*-*-*-*-u
 URxvt*loginShell: true
