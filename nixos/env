@@ -1,0 +1,115 @@
+#!/bin/sh
+
+export SM_NIX_ROOT=/home/ierton/proj/nix
+
+asroot() {
+  case `whoami` in
+    root)
+      echo "" ;;
+    *)
+      echo "sudo -H " ;;
+  esac
+}
+
+tofull() {
+  case $1 in
+    /*) echo "$1" ;;
+    *) echo "`pwd`/$1" ;;
+  esac
+}
+
+fetch() {
+  ( cd nixpkgs && git fetch origin ; )
+  ( cd nixos && git fetch origin ; )
+}
+
+manifest() {
+  `asroot` nix-channel --update nixos
+}
+
+rebuild() {
+  nixos-rebuild -I $SM_NIX_ROOT "$@" dry-run
+}
+
+switch() {
+  `asroot` nixos-rebuild -I $SM_NIX_ROOT switch
+}
+
+chrev() {
+  REVFILE=/nix/var/nix/profiles/per-user/root/channels/nixos/nixos/svn-revision
+  REV_INFO=`cut -d'_' -f2 < $REVFILE`
+  case $1 in
+    nixpkgs) echo $REV_INFO | cut -d'-' -f2 ;;
+    nixos) echo $REV_INFO | cut -d'-' -f1 ;;
+    *) return 1 ;;
+  esac
+}
+
+update() {
+  fetch &&
+  manifest &&
+  (cd $SM_NIX_ROOT/nixpkgs && git rebase `chrev nixpkgs` ; ) &&
+  (cd $SM_NIX_ROOT/nixos && git rebase `chrev nixos` ; )
+}
+
+vimp() {
+  (cd $SM_NIX_ROOT/nixpkgs && vim pkgs/top-level/all-packages.nix; )
+}
+
+vimn() {
+  (cd $SM_NIX_ROOT/nixos && vim .; )
+}
+
+vimc() {
+  (cd $SM_NIX_ROOT && vim nixos-config ; ) 
+}
+
+# Fetches a source by name (as written in all-packages.nix)
+fetchpkg() {
+  nix-build --no-out-link $SM_NIX_ROOT/nixpkgs/pkgs/top-level/all-packages.nix -A $1.src --show-trace 
+}
+
+# Unpacks a source, renames output to a friendly name
+unpacksrc () {
+	local curSrc="$1"
+	local friendlyName="$2"
+	test -f "$curSrc" || { echo "no such file: $curSrc" >&2; return 1 ; }
+	case "$curSrc" in
+		*.tar) tar xvf $curSrc ;;
+		*.tar.gz|*.tgz|*.tar.Z) gzip -d < $curSrc | tar xvf - ;;
+		*.tar.bz2|*.tbz2) bzip2 -d < $curSrc | tar xvf - ;;
+		*.zip) unzip $curSrc ;;
+		*) if test -d "$curSrc" ; then
+				if test -n "$friendlyName" ; then
+					cp -prvd "$curSrc" "./$friendlyName"
+				else
+					cp -prvd "$curSrc" .
+				fi
+			else
+				echo "source archive $curSrc has unknown type" >&2
+				return 1
+			fi ;;
+	esac
+}
+
+unpack() {
+  unpacksrc `fetchpkg $1` $1
+}
+
+export PS1="\n[\u@\h] \w \$ "
+
+###end-of-rc###
+
+#export REAL_SHELL=$SHELL
+rc=`mktemp`
+cp $HOME/.bashrc $rc
+cat $0 | sed -n '/#!\/bin\/sh/,/###end-of-rc###/p' >> $rc
+printf "export SHELL=%s\n" $SHELL >> $rc
+#echo $@ >> $rc
+
+case $1 in
+  screen) screen -s $0 ;;
+  *) bash --rcfile $rc "$@" ;;
+esac
+rm $rc
+
