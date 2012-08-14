@@ -21,7 +21,7 @@
     "fbcon"
     ];
 
-  #boot.kernelPackages = pkgs.linuxPackages_3_5;
+  boot.kernelPackages = pkgs.linuxPackages_3_5;
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
@@ -107,12 +107,18 @@
   # Enable the X11 windowing system.
   services.xserver = {
     enable = true;
+
+    videoDrivers = [ "intel" ];
+
     layout = "us,ru";
+
     xkbOptions = "eurosign:e, grp:alt_space_toggle, ctrl:swapcaps, grp_led:caps, ctrl:nocaps";
 
     desktopManager.xfce.enable = true;
-    videoDrivers = [ "intel" ];
+    #desktopManager.kde4.enable = true;
+
     displayManager = {
+      #kdm.enable = true;
       slim = {
         enable = true;
         defaultUser = "ierton";
@@ -159,7 +165,12 @@
     '';
   };
 
+  services.acpid = {
+    enable = true;
+  };
+
   fonts = {
+    enableFontConfig = true;
     enableFontDir = true;
     enableCoreFonts = true;
     enableGhostscriptFonts = true;
@@ -169,22 +180,27 @@
       dejavu_fonts
       terminus_font
       bakoma_ttf
-      clearlyU
-      cm_unicode
-      andagii
+      #clearlyU
+      #cm_unicode
+      #andagii
       bakoma_ttf
+      ubuntu_font_family
+      vistafonts
+      unifont
+      freefont_ttf
     ];
   };
+
+  environment.pathsToLink = ["/"];
 
   environment.systemPackages = with pkgs ; [
     # Basic tools
     psmisc
     iptables
-    dhcp
     nmap
     tcpdump
     pmutils
-    acpitool
+    file
     cpufrequtils
     zip
     unzip
@@ -204,6 +220,8 @@
     unetbootin
     rpm
     acpid
+    atool
+    acpi
 
     # X11 apps
     xorg.xdpyinfo
@@ -215,13 +233,14 @@
     rxvt_unicode
     vimHugeX
     #chromeWrapper
+    #opera
     firefoxWrapper
     glxinfo
     feh
     xcompmgr
     zathura
     evince
-    xneur
+    gxneur
     MPlayer
     xlibs.xev
     xfontsel
@@ -247,6 +266,9 @@
     #impressive
     #pianobooster
     pidgin
+    gnome2.zenity
+    wireshark
+    ghdl
 
     (pkgs.haskellPackages.ghcWithPackages (self : [
         self.haskellPlatform
@@ -254,7 +276,20 @@
         self.happstackHamlet
         self.happstackUtil
         self.cabalInstall
+        self.HSH
+        self.cmdlib
+        self.ghcMod
+        self.hoogle
+        self.haskdogs
+        self.hasktags
+        self.regexPcre
+        self.happy
     ]))
+
+    devenv
+    freetype_subpixel
+    xlibs.libXft_lcd
+    #libXft_lcd
   ];
 
 
@@ -264,7 +299,7 @@
     #firefox.enableRealPlayer = true;
     firefox.jre = true;
     #subversion.saslSupport = false; #true;
-    #freetype.useEncumberedCode = false; # true;
+    #freetype.useEncumberedCode = true;
 
     packageOverrides = pkgs: {
       libass = pkgs.libass.override {
@@ -273,8 +308,17 @@
 
       xorg = pkgs.xorg // { xf86videointel = pkgs.xorg.xf86videointel_2_17_0; } ;
 
+      freetype_subpixel = pkgs.freetype.override {
+        useEncumberedCode = true;
+      };
+
+      #libXft_lcd = pkgs.lib.overrideDerivation pkgs.xlibs.libXft (old :
+      #  old // { patches = [ ./libXft-2.1.14-lcd-cleartype.patch ]; }
+      #);
+
       devenv = pkgs.myEnvFun {
         name = "dev";
+
         buildInputs = with pkgs; [
           autoconf
           automake
@@ -309,6 +353,11 @@
           xlibs.libXrandr
           xlibs.randrproto
         ];
+
+        extraCmds = ''
+          unset http_proxy
+          unset https_proxy
+        '';
       };
     };
   };

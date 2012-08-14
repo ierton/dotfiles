@@ -149,14 +149,9 @@
         '';
     };
 
-    #desktopManager.kde4.enable = true;
     desktopManager.xfce.enable = true;
 
     displayManager = {
-
-      #kdm = {
-      #  enable = true;
-      #};
 
       slim = {
         enable = true;
@@ -168,15 +163,6 @@
     };
 
     videoDrivers = [ "intel" "vesa" ];
-
-    #monitorSection = ''
-      #DisplaySize 223 125
-    #'';
-
-    #screenSection = ''
-      #Option "UseEDID" "false"
-      #Option "DPI" "116x121"
-    #'';
   };
 
   services.postfix = {

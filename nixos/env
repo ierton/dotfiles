@@ -1,6 +1,16 @@
 #!/bin/sh
 
 export SM_NIX_ROOT=/home/ierton/proj/nix
+export NIX_PATH="nixpkgs=$SM_NIX_ROOT/nixpkgs:nixos=$SM_NIX_ROOT/nixos:nixos-config=$SM_NIX_ROOT/nixos-config:services=/etc/nixos/services"
+
+cdt() { cd $HOME/tmp; }
+cdn() { cd $SM_NIX_ROOT; }
+cdp() { cd $SM_NIX_ROOT/nixpkgs; }
+cdo() { cd $SM_NIX_ROOT/nixos; }
+
+vimc() { (cdn && vim nixos-config ; ); }
+vimp() { (cdp && vim pkgs/top-level/all-packages.nix; ); }
+vimo() { (cdo && vim .; ); }
 
 asroot() {
   case `whoami` in
@@ -18,24 +28,20 @@ tofull() {
   esac
 }
 
-fetch() {
-  ( cd nixpkgs && git fetch origin ; )
-  ( cd nixos && git fetch origin ; )
+tfetch() {
+  ( cdp && git fetch origin ; )
+  ( cdo && git fetch origin ; )
 }
 
-manifest() {
-  `asroot` nix-channel --update nixos
-}
-
-rebuild() {
+tdryrun() {
   nixos-rebuild -I $SM_NIX_ROOT "$@" dry-run
 }
 
-switch() {
+tswitch() {
   `asroot` nixos-rebuild -I $SM_NIX_ROOT switch
 }
 
-chrev() {
+trev() {
   REVFILE=/nix/var/nix/profiles/per-user/root/channels/nixos/nixos/svn-revision
   REV_INFO=`cut -d'_' -f2 < $REVFILE`
   case $1 in
@@ -45,32 +51,21 @@ chrev() {
   esac
 }
 
-update() {
-  fetch &&
-  manifest &&
-  (cd $SM_NIX_ROOT/nixpkgs && git rebase `chrev nixpkgs` ; ) &&
-  (cd $SM_NIX_ROOT/nixos && git rebase `chrev nixos` ; )
-}
-
-vimp() {
-  (cd $SM_NIX_ROOT/nixpkgs && vim pkgs/top-level/all-packages.nix; )
-}
-
-vimn() {
-  (cd $SM_NIX_ROOT/nixos && vim .; )
-}
-
-vimc() {
-  (cd $SM_NIX_ROOT && vim nixos-config ; ) 
+tupdate() {
+  tfetch &&
+  (`asroot` nix-channel --update nixos) &&
+  (cd $SM_NIX_ROOT/nixpkgs && git rebase `trev nixpkgs` ; ) &&
+  (cd $SM_NIX_ROOT/nixos && git rebase `trev nixos` ; )
 }
 
 # Fetches a source by name (as written in all-packages.nix)
-fetchpkg() {
+pfetch() {
   nix-build --no-out-link $SM_NIX_ROOT/nixpkgs/pkgs/top-level/all-packages.nix -A $1.src --show-trace 
+  #nix-build --no-out-link "<nixpkgs>" -A $1.src --show-trace 
 }
 
 # Unpacks a source, renames output to a friendly name
-unpacksrc () {
+unpack_tarball() {
 	local curSrc="$1"
 	local friendlyName="$2"
 	test -f "$curSrc" || { echo "no such file: $curSrc" >&2; return 1 ; }
@@ -92,9 +87,15 @@ unpacksrc () {
 	esac
 }
 
-unpack() {
-  unpacksrc `fetchpkg $1` $1
+punpack() {
+  unpack_tarball `pfetch $1` $1
 }
+
+penv() {
+   nix-build $SM_NIX_ROOT/nixpkgs --run-env -A $1
+}
+
+alias nixenv="nix-env -f '<nixpkgs>'"
 
 export PS1="\n[\u@\h] \w \$ "
 
@@ -105,7 +106,7 @@ rc=`mktemp`
 cp $HOME/.bashrc $rc
 cat $0 | sed -n '/#!\/bin\/sh/,/###end-of-rc###/p' >> $rc
 printf "export SHELL=%s\n" $SHELL >> $rc
-#echo $@ >> $rc
+#cd $SM_NIX_ROOT
 
 case $1 in
   screen) screen -s $0 ;;
