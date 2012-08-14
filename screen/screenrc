@@ -5,7 +5,7 @@ startup_message off
 defscrollback 5000
 altscreen on
 autodetach off
-hardstatus alwayslastline "%{= wk} %H : %{= wk}%-w%{= Kw}%n %t%{= wk}%+w"
+hardstatus alwayslastline "%{= Kw} %H : %{= Kw}%-w%{= wk}%n %t%{= Kw}%+w"
 
 multiuser on
 acldel guest
@@ -19,11 +19,10 @@ termcapinfo xterm*|rxvt-unicode* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 defhstatus "screen ^E (^Et) | $USER@^EH"
 
 # erase background with current bg color
-defbce "on" 
-
+defbce "on"
 
 deflogin "on"
-shell -$SHELL
+#shell -$SHELL
 
 # Ctrl+A,X
 bind q quit
