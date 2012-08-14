@@ -8,7 +8,7 @@ let maplocalleader = "`"
 
 set guioptions-=m
 set guioptions-=T
-set scrolloff=100
+set scrolloff=10
 set tabstop=4
 set nobackup
 set shiftwidth=4
@@ -33,7 +33,7 @@ set fileencodings=utf8,cp1251
 set t_Co=256
 set modeline
 set textwidth=80
-set timeoutlen=300
+set timeoutlen=500
 
 au Bufenter * syntax sync minlines=50
 
@@ -42,7 +42,7 @@ au FileType *haskell set smartindent
 au FileType cabal set expandtab
 
 " Enable auto-paragraph-reformat, when editing emails
-au FileType mail set formatoptions+=an
+"au FileType mail set formatoptions+=an
 
 " When editing a file, always jump to the last known cursor position.
 " Don't do it when the position is invalid or when inside an event handler
@@ -52,8 +52,8 @@ au BufReadPost *
 	\   exe "normal g`\"" |
 	\ endif
 
-highlight ExtraWhitespace ctermbg=red guibg=red
-au Syntax * syn match ExtraWhitespace /\s\+$/
+"highlight ExtraWhitespace ctermbg=red guibg=red
+"au Syntax * syn match ExtraWhitespace /\s\+$/
 
 " General bindings
 inoremap <Leader><Leader> <Leader>
@@ -77,7 +77,7 @@ nnoremap k gk
 nnoremap Y y$
 
 " Quick quit
-nnoremap <ESC><ESC><ESC><ESC> :qa<CR>
+"nnoremap <ESC><ESC><ESC><ESC> :qa<CR>
 nnoremap q <ESC>:q<CR>
 
 " Visual mode tweaks
@@ -96,6 +96,8 @@ inoremap <F5> <Esc>:make<CR>
 
 " Tabs
 map gr gT
+map tn :tabnew<CR>
+map th :tabnew $HOME<CR>
 
 " Quicfix bindings {{{
 function! QFmap(a,b)
@@ -265,11 +267,19 @@ command! -nargs=* Find :call Find(<f-args>)
 " }}}
 
 " TagList
-let g:Tlist_Use_Horiz_Window = 1
-let g:Tlist_Show_One_File = 1
-let g:Tlist_Max_Tag_Length = 30
-let g:Tlist_GainFocus_On_ToggleOpen = 1
-nnoremap <Leader>l <ESC>:TlistToggle<CR>
+"let g:Tlist_Use_Horiz_Window = 1
+"let g:Tlist_Show_One_File = 1
+"let g:Tlist_Max_Tag_Length = 30
+"let g:Tlist_GainFocus_On_ToggleOpen = 1
+"nnoremap <Leader>l <ESC>:TlistToggle<CR>
+
+" TagBar
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 1
+nnoremap <Leader>l <ESC>:TagbarToggle<CR>
+"autocmd VimEnter * nested :call tagbar#autoopen(1)
+"autocmd BufEnter * nested :call tagbar#autoopen(0)
+"autocmd FileType c,cpp,haskell nested :TagbarOpen
 
 " NERDTree settings
 let g:NERDTreeWinSize=25
@@ -287,10 +297,10 @@ let g:EasyGrepRecursive = 1
 let g:EasyGrepMode = 2
 
 " Haskell
-let g:haddock_browser = "firefox"
-let g:haddock_browser_callformat = '%s %s'
-let g:haskell_indent_case = 0
-let g:haskell_indent_if = 0
+"let g:haddock_browser = "firefox"
+"let g:haddock_browser_callformat = '%s %s'
+"let g:haskell_indent_case = 0
+"let g:haskell_indent_if = 0
 
 " Local vimrc
 let g:local_vimrc = '.vimrc_local.vim'
@@ -299,9 +309,6 @@ let g:local_vimrc = '.vimrc_local.vim'
 let g:GetLatestVimScripts_allowautoinstall = 1
 
 " Comments
-map <leader>c <C-C>
-map <leader>x <C-X>
-
-" Opener
-let g:opener_cmd = "xdg-open"
+vmap <C-C> \\
+map <C-C> \\\j
 
