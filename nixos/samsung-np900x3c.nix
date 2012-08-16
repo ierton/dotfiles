@@ -59,7 +59,7 @@
 
   # List swap partitions activated at boot time.
   swapDevices = [
-    # { device = "/dev/disk/by-label/swap"; }
+    { device = "/dev/disk/by-label/SWAP"; }
   ];
 
   powerManagement = {
@@ -233,7 +233,7 @@
     rxvt_unicode
     vimHugeX
     #chromeWrapper
-    #opera
+    opera
     firefoxWrapper
     glxinfo
     feh
