@@ -1,2 +1,11 @@
-Various configuration files.
-Keywords: NixOS xmonad shell X
+Dotfiles
+========
+
+* NIXOS config
+* Vim config
+* GNU Screen config
+* etc
+
+Install
+=======
+See, than run ./install
