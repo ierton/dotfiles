@@ -33,7 +33,7 @@ tfetch() {
   ( cdo && git fetch origin ; )
 }
 
-tdryrun() {
+ttest() {
   nixos-rebuild -I $SM_NIX_ROOT "$@" dry-run
 }
 
@@ -54,45 +54,34 @@ trev() {
 tupdate() {
   tfetch &&
   (`asroot` nix-channel --update nixos) &&
-  (cd $SM_NIX_ROOT/nixpkgs && git rebase `trev nixpkgs` ; ) &&
-  (cd $SM_NIX_ROOT/nixos && git rebase `trev nixos` ; )
+  (cd $SM_NIX_ROOT/nixpkgs && git checkout local && git tag -f prev && git rebase `trev nixpkgs` ; ) &&
+  (cd $SM_NIX_ROOT/nixos && git checkout local && git tag -f prev && git rebase `trev nixos` ; )
 }
 
 # Fetches a source by name (as written in all-packages.nix)
 pfetch() {
   nix-build --no-out-link $SM_NIX_ROOT/nixpkgs/pkgs/top-level/all-packages.nix -A $1.src --show-trace 
-  #nix-build --no-out-link "<nixpkgs>" -A $1.src --show-trace 
 }
 
-# Unpacks a source, renames output to a friendly name
-unpack_tarball() {
-	local curSrc="$1"
-	local friendlyName="$2"
-	test -f "$curSrc" || { echo "no such file: $curSrc" >&2; return 1 ; }
-	case "$curSrc" in
-		*.tar) tar xvf $curSrc ;;
-		*.tar.gz|*.tgz|*.tar.Z) gzip -d < $curSrc | tar xvf - ;;
-		*.tar.bz2|*.tbz2) bzip2 -d < $curSrc | tar xvf - ;;
-		*.zip) unzip $curSrc ;;
-		*) if test -d "$curSrc" ; then
-				if test -n "$friendlyName" ; then
-					cp -prvd "$curSrc" "./$friendlyName"
-				else
-					cp -prvd "$curSrc" .
-				fi
-			else
-				echo "source archive $curSrc has unknown type" >&2
-				return 1
-			fi ;;
-	esac
-}
-
+# Unpacks the tarball
 punpack() {
-  unpack_tarball `pfetch $1` $1
+  aunpack `pfetch $1`
 }
 
+# Upacks the tarball and runs sets up build environment
 penv() {
-   nix-build $SM_NIX_ROOT/nixpkgs --run-env -A $1
+  A=`pfetch "$1"`
+  test -n "$A" || return 1
+  T=`mktemp -d`
+  test -n "$T" || return 1
+
+  cd "$T" &&
+  aunpack $A &&
+  cd `ls -1 .` &&
+  nix-build $SM_NIX_ROOT/nixpkgs --run-env -A "$1"
+
+  echo "Deleting $T" >&2
+  rm -rf "$T"
 }
 
 alias nixenv="nix-env -f '<nixpkgs>'"
@@ -101,12 +90,10 @@ export PS1="\n[\u@\h] \w \$ "
 
 ###end-of-rc###
 
-#export REAL_SHELL=$SHELL
 rc=`mktemp`
 cp $HOME/.bashrc $rc
 cat $0 | sed -n '/#!\/bin\/sh/,/###end-of-rc###/p' >> $rc
 printf "export SHELL=%s\n" $SHELL >> $rc
-#cd $SM_NIX_ROOT
 
 case $1 in
   screen) screen -s $0 ;;
