@@ -34,6 +34,7 @@ set t_Co=256
 set modeline
 set textwidth=80
 set timeoutlen=500
+set directory=~/tmp/vim.swp/,.,~/tmp,/var/tmp,/tmp
 
 au Bufenter * syntax sync minlines=50
 
@@ -70,6 +71,9 @@ vnoremap <F3> gq
 
 " Fast command line
 nnoremap ! :!
+
+" Screen
+nnoremap s :!screen<CR>
 
 " Display lines scrolling
 nnoremap j gj
@@ -266,6 +270,48 @@ endfunction
 command! -nargs=* Find :call Find(<f-args>)
 " }}}
 
+" Smart tag navigation {{{
+let g:rt_cw = ''
+function! RT()
+	let cw = expand('<cword>')
+	let cf = expand('%:p')
+	let cl = line('.')
+
+	if g:rt_cw == ''
+		let g:rt_cw = cw
+	endif
+
+	let i = 0
+	let m = 0
+	for f in taglist('^' . g:rt_cw . '$')
+		let i = i+1
+		if f.cmd == cl && fnamemodify(f.filename, ':p') == cf
+			let m = i
+		endif
+	endfor
+	if i > 0 && m > 0
+		" We are browsing g:rt_cw tag
+		if m == i
+			let m = 1
+		else
+			let m = m+1
+		endif
+		execute m . "tag " . cw
+	else
+		" We are somewhere in the code or no tags
+		if g:rt_cw != cw
+			" Current word has changed, try the new one
+			let g:rt_cw = cw
+			call RT()
+		else
+			" Blindly follow the tag
+			execute "tag " . cw
+		endif
+	endif
+endfunction
+map <C-]> :call RT()<CR>
+" }}}
+
 " TagList
 "let g:Tlist_Use_Horiz_Window = 1
 "let g:Tlist_Show_One_File = 1
@@ -311,4 +357,7 @@ let g:GetLatestVimScripts_allowautoinstall = 1
 " Comments
 vmap <C-C> \\
 map <C-C> \\\j
+map <C-X> \\\j
 
+" SuperTab
+let g:SuperTabDefaultCompletionType = "context"
