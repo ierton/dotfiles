@@ -1,0 +1,44 @@
+[ -z "${PS1}" ] && return
+
+alias q="exit"
+alias cal="cal -m"
+alias df="df -h"
+alias du="du -h"
+alias ls="ls --color=auto"
+alias log="vim /var/log/messages +"
+alias logX="vim /var/log/X.0.log +"
+alias vimless="vim -R -"
+alias man="LANG=C man"
+alias wicd="wicd-gtk --no-tray"
+alias feh="feh -."
+alias s="screen"
+alias sn="~/proj/nix/env screen"
+alias devenv="load-env-dev"
+alias nix="~/proj/nix/env"
+alias gitk="LANG=C gitk"
+
+logt() {
+	case $1 in
+		wicd)  sudo tail -f /var/log/wicd/wicd.log  ;;
+		X)  tail -f /var/log/X.0.log  ;;
+		*) tail -f /var/log/messages ;;
+	esac
+}
+
+
+pfind() {
+	find -iname "*$1*"
+}
+
+addldpath() {
+	local S=`nix-env -qas $1 --out-path | awk '{print $3}'`
+	local N=`echo $S | wc -w`
+	case $N in
+		1) ;;
+		0) echo "Package $1 not found" >&2 ; return 1 ;;
+		*) echo "More than one occurence of $1 found, abort" >&2 ; return 1 ;;
+	esac
+	export LD_LIBRARY_PATH="$S/lib:$LD_LIBRARY_PATH"
+	echo $LD_LIBRARY_PATH
+}
+
